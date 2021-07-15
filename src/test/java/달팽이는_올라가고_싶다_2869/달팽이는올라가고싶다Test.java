@@ -28,23 +28,23 @@ public class 달팽이는올라가고싶다Test {
         System.out.println(String.format(template, A, B, V, answer, iterAnswer));
     }
 
-    @Test
-    public void 전체테스트() {
-        int max = 1_000_000_000;
-
-        for (int V = 2; V < max; V++) {
-            for (int A = 2; A <= V; A++) {
-                for (int B = 1; B < A; B++) {
-                    String answer = solution(A, B, V);
-                    String iterAnswer = iterSolution(A, B, V);
-                    if (!answer.equals(iterAnswer)) {
-                        System.out.println(String.format(template, A, B, V, answer, iterAnswer));
-                    }
-                }
-            }
-        }
-
-    }
+    // @Test
+    // public void 전체테스트() {
+    //     int max = 1_000_000_000;
+    //
+    //     for (int V = 2; V < max; V++) {
+    //         for (int A = 2; A <= V; A++) {
+    //             for (int B = 1; B < A; B++) {
+    //                 String answer = solution(A, B, V);
+    //                 String iterAnswer = iterSolution(A, B, V);
+    //                 if (!answer.equals(iterAnswer)) {
+    //                     System.out.println(String.format(template, A, B, V, answer, iterAnswer));
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    // }
 
     private String solution(int A, int B, int V) {
         int left = V - B;

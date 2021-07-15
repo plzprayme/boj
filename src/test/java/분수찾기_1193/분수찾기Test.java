@@ -1,5 +1,7 @@
 package 분수찾기_1193;
 
+import java.io.BufferedWriter;
+
 import org.junit.jupiter.api.Test;
 
 public class 분수찾기Test {
