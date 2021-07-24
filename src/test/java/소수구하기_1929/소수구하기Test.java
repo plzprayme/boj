@@ -18,23 +18,39 @@ public class 소수구하기Test {
         int x = parse(xy[0]);
         int y = parse(xy[1]);
 
-        boolean[] isNotPrime = new boolean[y+1];
-        isNotPrime[1] = true;
-        for (int i = 2; i <= y; i++) {
-            if (isNotPrime[i]) continue;
-
-            for (int j = i * 2; j <= y; j = j + i) {
-                isNotPrime[j] = true;
-            }
-        }
-
-        for (int i = x; i <= y; i++) {
-            if (!isNotPrime[i]) {
-                w.write(String.valueOf(i));
-                w.newLine();
-            }
-        }
+        w.write(new Prime(y).sieveOfEratosthenes().allUpFromTo(x, y));
         w.flush();
+    }
+
+    private class Prime {
+        boolean[] isNotPrime;
+
+        public Prime(int N) {
+            this.isNotPrime = new boolean[N+1];
+            isNotPrime[1] = true;
+        }
+
+        private Prime sieveOfEratosthenes() {
+            int N = isNotPrime.length - 1;
+            for (int i = 2; i <= N; i++) {
+                if (isNotPrime[i]) continue;
+
+                for (int j = i * 2; j <= N; j = j + i) {
+                    isNotPrime[j] = true;
+                }
+            }
+            return this;
+        }
+
+        public String allUpFromTo(int from, int to) {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = from; i <= to; i++) {
+                if (!isNotPrime[i]) sb.append(String.format("%d\n", i));
+            }
+
+            return sb.toString();
+        }
     }
 
     private int parse(String s) {
