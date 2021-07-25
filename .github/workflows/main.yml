@@ -1,0 +1,21 @@
+name: BOJ READ UPDATER
+
+on:
+  push:
+    branches: [ boj ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Update README
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: ls
+
+      - name: Update README
+        uses: plzprayme/boj-auto-formatter@v1.0.0
+        with:
+          solvedac: 'dbfpzk142'
+          path: 'src\test\java'
