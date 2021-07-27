@@ -15,7 +15,7 @@ jobs:
       - run: ls
 
       - name: Update README
-        uses: plzprayme/boj-auto-formatter@v1.0.0
+        uses: plzprayme/boj-auto-formatter@master
         with:
           solvedac: 'dbfpzk142'
           path: 'src\test\java'
