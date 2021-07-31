@@ -1,5 +1,7 @@
 package 정렬.삽입;
 
+import java.util.List;
+
 import 정렬.Sort;
 
 public class Insertion extends Sort {
@@ -9,7 +11,7 @@ public class Insertion extends Sort {
     }
 
     @Override
-    public void sort() {
+    public List<Integer> sort() {
         for (int i = 1; i < list.size(); i++) {
 
             int minIndex = -1;
@@ -25,6 +27,7 @@ public class Insertion extends Sort {
                 list.remove(i + 1);
             }
         }
+        return null;
     }
 
     private boolean isSmaller(int a, int b) {

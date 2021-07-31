@@ -1,6 +1,6 @@
 package 정렬.버블;
 
-import java.util.Collections;
+import java.util.List;
 
 import 정렬.Sort;
 
@@ -11,7 +11,7 @@ public class Bubble extends Sort {
     }
 
     @Override
-    public void sort() {
+    public List<Integer> sort() {
 
         int size = list.size() - 1;
         for (int i = 0; i < size; i++) {
@@ -26,6 +26,7 @@ public class Bubble extends Sort {
 
             if (isSorted) break;
         }
+        return null;
     }
 
     private boolean isBigger(int a, int b) {

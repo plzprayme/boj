@@ -41,13 +41,13 @@ public class MergeTest {
         System.out.println(sort(Arrays.asList(new RandomInteger().get(100))));
     }
 
-    private List<Integer> sort(List<Integer> arr) {
+    private static List<Integer> sort(List<Integer> arr) {
         List<Integer> left = split(arr.subList(0, arr.size() / 2));
         List<Integer> right = split(arr.subList(arr.size() / 2, arr.size()));
         return merge(left, right);
     }
 
-    private List<Integer> split(List<Integer> arr) {
+    private static List<Integer> split(List<Integer> arr) {
         if (arr.size() < 2) {
             return arr;
         }
@@ -58,7 +58,7 @@ public class MergeTest {
     }
 
 
-    private List<Integer> merge(List<Integer> left, List<Integer> right) {
+    private static List<Integer> merge(List<Integer> left, List<Integer> right) {
         List<Integer> merged = new ArrayList<>();
 
         int lm = left.size();
