@@ -52,9 +52,18 @@ public class StoneGame_7th {
                 piles.add(i);
             }
 
-            next(0, 0, piles);
+            int alex = 0;
+            int lee = 0;
+            while (!piles.isEmpty()) {
+                alex += piles.getFirst() > piles.getLast() ? piles.pollFirst() : piles.pollLast();
+                lee += piles.getFirst() > piles.getLast() ? piles.pollLast() : piles.pollFirst();
+            }
 
-            return results.contains(true);
+            return alex > lee;
+
+            // next(0, 0, piles);
+            //
+            // return results.contains(true);
         }
 
         private void next(int alex, int lee, Deque<Integer> piles) {
