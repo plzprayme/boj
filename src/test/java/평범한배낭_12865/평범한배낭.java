@@ -5,13 +5,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
 
@@ -33,43 +26,29 @@ public class 평범한배낭 {
         int N = parse(nk[0]);
         int K = parse(nk[1]);
 
-        // 정렬된 상태의 Map
-        SortedMap<Integer, Integer> map = new TreeMap<>();
-        for (int i = 0; i < N; i++) {
-            // W V 입력 받기
-            String[] wv = r.readLine().split(" ");
-            int W = parse(wv[0]);
-            int V = parse(wv[1]);
+        int[] W = new int[N + 1];
+        int[] V = new int[N + 1];
+        int[][] dp = new int[N + 1][K + 1];
 
-            // 가치가 0이거나 무게가 배낭의 최대 용량보다 클 경우 스킵
-            if (V == 0) continue;
-            if (W > K) continue;
-
-            // 최댓값만 저장
-            int value = Math.max(map.getOrDefault(W, V), V);
-            map.put(W, value);
+        for (int i = 1; i <= N; i++) {
+            String[] WV = r.readLine().split(" ");
+            W[i] = parse(WV[0]);
+            V[i] = parse(WV[1]);
         }
 
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= K; j++) {
 
-        //
-        int answer = 0;
-        Set<Integer> keys = map.keySet();
-        for (int key : keys) {
+                if (W[i] > j) {
+                    dp[i][j] = dp[i - 1][j];
+                }
+                else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - W[i]] + V[i]);
+                }
 
-            int tmp = key;
-            int value = map.get(key);
-            for (int next : keys) {
-                tmp = key + next;
-                if (tmp > K) break;
-                if (key == next) continue;
-
-                value += map.get(next);
             }
-            answer = Math.max(answer, value);
-
         }
-
-        w.write(String.valueOf(answer));
+        w.write(String.valueOf(dp[N][K]));
         w.flush();
     }
 
