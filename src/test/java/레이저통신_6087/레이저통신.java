@@ -21,24 +21,15 @@ public class 레이저통신 {
 
     static int W, H;
     static char map[][];
+    static int[][] dist;
     static int[] dx = {0, 0, 1, -1}, dy = {1, -1, 0, 0};
-    static class State implements Comparable<State> {
-        int x, y;
-        int dir;
-        int count;
 
-        public State(int x, int y, int dir, int count) {
+    static class State {
+        int x, y;
+
+        public State(int x, int y) {
             this.x = x;
             this.y = y;
-            this.dir = dir;
-            this.count = count;
-        }
-
-        // 우선순위 큐에 카운트가 적은 순으로 정렬되도록
-        @Override
-        public int compareTo(State o) {
-            // 왼쪽이 작으면 -1 같으면 0 크면 1
-            return Integer.compare(count, o.count);
         }
     }
 
@@ -51,68 +42,66 @@ public class 레이저통신 {
         H = Integer.parseInt(st.nextToken());
         map = new char[H][W];
 
+
         boolean isStart = false;
         State start = null, end = null;
+        // 지도 정보 입력
         for (int i = 0; i < H; i++) {
             map[i] = r.readLine().toCharArray();
             for (int j = 0; j < W; j++) {
-
+                // 레이저가 있다면
                 if (map[i][j] == 'C') {
+                    // 시작점이 정해지지 않았다면
                     if (!isStart) {
-                        start = new State(i, j, 0, 0);
+                        start = new State(i, j);
                         isStart = true;
-                    } else {
-                        end = new State(i, j, 0, 0);
-                    }
+                    } else
+                        end = new State(i, j);
                 }
-
             }
         }
 
-        System.out.println(go(start, end));
+
+        go(start, end);
+        System.out.println(dist[end.x][end.y] - 1);
     }
 
-    private static int go(State start, State end) {
-        PriorityQueue<State> pQ = new PriorityQueue<>();
-        // 방향별 visit 확인
-        boolean[][][] visited = new boolean[4][H][W];
+    private static void go(State start, State end) {
 
-        // 시작점으로부터 4방향을 pq에 먼저 넣기
-        for (int d = 0; d < 4; d++) {
-            int xx = start.x + dx[d];
-            int yy = start.y + dy[d];
+        Queue<State> q = new LinkedList<>();
+        dist = new int[H][W];
+        // 시작점부터 출발
+        q.add(start);
 
-            // 범위 벗어남
-            if (xx < 0 || yy < 0 || xx >= H || yy >= W) continue;
+        while (!q.isEmpty()) {
+            State now = q.poll();
+            // 도착
+            if(dist[end.x][end.y] != 0) return;
 
-            // 벽일 때
-            if (map[xx][yy] == '*') continue;
-            pQ.add(new State(xx, yy, d, 0));
-        }
-
-        while (!pQ.isEmpty()) {
-            State now = pQ.poll();
-
-            // 도착 지점 도달
-            if (now.x == end.x && now.y == end.y) return now.count;
-            // 이미 방문한 곳은 패스
-            if (visited[now.dir][now.x][now.y]) continue;
-            visited[now.dir][now.x][now.y] = true;
-
-            // 동서남북 탐색
+            // 4방 탐색
             for (int d = 0; d < 4; d++) {
                 int xx = now.x + dx[d];
                 int yy = now.y + dy[d];
-                // 범위 벗어남
-                if (xx < 0 || yy < 0 || xx >= H || yy >= W) continue;
-                if (map[xx][yy] == '*') continue;
 
-                if (now.dir == d) pQ.add(new State(xx, yy, d, now.count));
-                else pQ.add(new State(xx, yy, d, now.count + 1)); // 180도 도는건 왜 카운트가 1 증가?
+                // 범위를 벗어나지 않고, 벽이 나오지 않았을 때 계속 반복
+                while (xx >= 0 && yy >= 0 && xx < H && yy < W && map[xx][yy] != '*') {
+                    // 방문하지 않았을 때
+                    if (dist[xx][yy] == 0) {
+                        // 이전의 거울 개수를 저장
+                        dist[xx][yy] = dist[now.x][now.y] + 1;
+                        // 다음 좌표 담기 9같은 방향으로)
+                        q.add(new State(xx, yy));
+                    }
+
+                    // 다음칸으로 이동
+                    xx += dx[d];
+                    yy += dy[d];
+                }
             }
-
         }
 
-        return 0;
+
     }
+
+
 }
