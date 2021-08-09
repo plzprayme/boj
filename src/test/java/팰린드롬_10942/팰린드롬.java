@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 public class 팰린드롬 {
 
     static int[] numbers;
+    static boolean[][] isPalindrome;
 
     @Test
     public void main() throws IOException {
@@ -35,12 +36,8 @@ public class 팰린드롬 {
         // 어떻게..??
 
         // 구간 별 기억하기
-        boolean[][] isPalindrome = new boolean[N][N];
-        for (int i = 1; i < N; i++) {
-            for (int j = 1; j < N; j++) {
-                isPalindrome[i][j] = validate(i, j);
-            }
-        }
+        isPalindrome = new boolean[N][N];
+        validate();
 
         int M = parse(r.readLine());
         for (int i = 0; i < M; i++) {
@@ -60,21 +57,20 @@ public class 팰린드롬 {
         w.flush();
     }
 
-    private static boolean validate(int start, int end) {
-        // s   e e
-        // 0 1 2
-        // 0 1 2 3
-        if (start == end)
-            return true;
+    private static void validate() {
+        int N = numbers.length;
+        for (int i = 1; i < N; i++) isPalindrome[i][i] = true;
 
-        while (start < end) {
-            if (numbers[start] != numbers[end])
-                return false;
-            ++start;
-            --end;
+        for (int i = 1; i < N - 1; i++)  {
+            if (numbers[i] == numbers[i+1]) isPalindrome[i][i+1] = true;
         }
 
-        return true;
+        for (int i = 2; i < N - 1; i++) {
+            for (int j = 1; j < N - i; j++) {
+                if (isPalindrome[j + 1][j + i - 1] && numbers[j] == numbers[j+i]) isPalindrome[j][j+i] = true;
+
+            }
+        }
     }
 
     private static int parse(String s) {
