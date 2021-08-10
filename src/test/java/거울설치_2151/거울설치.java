@@ -1,8 +1,10 @@
 package 거울설치_2151;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.PriorityQueue;
@@ -12,10 +14,6 @@ import org.junit.jupiter.api.Test;
 public class 거울설치 {
 
     private static State start = null;
-    private static State end = null;
-
-    private static int[] dx = {-1, 1, 0, 0}; // 왼 오 외 아
-    private static int[] dy = {0, 0, -1, 1};
 
     private static Direction[] directions = {
         new Direction(-1, 0, 'L'),
@@ -28,19 +26,20 @@ public class 거울설치 {
     public static void main(String[] args) throws IOException {
         BufferedReader r = new BufferedReader(
             new FileReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\거울설치_2151\\input.txt"));
+        BufferedWriter w = new BufferedWriter(new OutputStreamWriter(System.out));
         int N = Integer.parseInt(r.readLine());
 
         char[][] map = new char[N][N];
         for (int _x = 0; _x < N; _x++) {
-            map[_x] = r.readLine().toCharArray();
 
+            map[_x] = r.readLine().toCharArray();
             for (int _y = 0; _y < N; _y++) {
 
-                if (map[_y][_x] == '#') {
-                    if (Objects.isNull(start)) {
-                        start = new State(_x, _y, 0);
-                    } else {
-                        end = new State(_x, _y, 0);
+                // 아직 start가 없으면
+                if (Objects.isNull(start)) {
+                    // 시작 위치 저장
+                    if (map[_y][_x] == '#') {
+                        start = new State(_x, _y, 0, null);
                     }
                 }
 
@@ -48,74 +47,46 @@ public class 거울설치 {
 
         }
 
-        for (char c[] : map) {
-            System.out.println(Arrays.toString(c));
-        }
+        // for (char c[] : map) {
+        //     System.out.println(Arrays.toString(c));
+        // }
 
         PriorityQueue<State> q = new PriorityQueue<>();
-        q.add(start);
+        for (Direction d : directions) {
+            int nx = start.x + d.x;
+            int ny = start.y + d.y;
+
+            if (nx < N && ny < N && nx > -1 && ny > -1 && map[ny][nx] != '*') {
+                q.add(new State(nx, ny, 0, d));
+            }
+        }
 
         while (!q.isEmpty()) {
-            State now = q.poll();
-
-            if (map[now.y][now.x] == '#') {
-                System.out.println(now.mirror);
+            State state = q.poll();
+            char now = map[state.y][state.x];
+            if (now == '#') {
+                w.write(state.mirror());
+                w.flush();
                 return;
             }
 
-            for (Direction d : directions) {
-                int nx = now.x + d.x;
-                int ny = now.y + d.y;
+            if (now == '.') {
+                q.add(new State(state.nextX(), state.nextY(), state.mirror, state.d));
+            }
 
-                if (nx > N || nx < 0 || ny > N || ny < 0) continue;
+            if (now == '!') {
 
-                char next = map[ny][nx];
-                // 막혀 있으면 다른 방향으로
-                if (next == '*')
-                    continue;
+                for (Direction d : state.d.turn()) {
+                    int nx = state.x + d.x;
+                    int ny = state.y + d.y;
 
-                // 전진 가능하면 다음 좌표로 이동
-                if (next == '.')
-                    q.add(new State(nx, ny, now.mirror));
-
-                // 거울 설치 가능하면 거울 설치 or 설치하지 않고 직진
-                if (next == '!') {
-
-                    // 현재 방향이 위,아래라면 왼, 오 추가
-                    if (d.direction == 'D' || d.direction == 'U') {
-
-                        // 다음 좌표가 배열 안쪽, 벽이 아니라면 이동
-                        if (nx + 1 < N && map[ny][nx+1] != '*') {
-                            q.add(new State(nx + 1, ny, now.mirror + 1));
-                        }
-
-                        if (nx - 1 > -1 && map[ny][nx-1] != '*') {
-                            q.add(new State(nx - 1, ny, now.mirror + 1));
-                        }
-
-
+                    if (nx < N && ny < N && nx > -1 && ny > -1 && map[ny][nx] != '*') {
+                        q.add(new State(nx, ny, state.mirror + 1, d));
                     }
-
-                    // 현재 방향이 왼,오라면 위, 아래 추가
-                    if (d.direction == 'L' || d.direction == 'R') {
-
-                        if (ny + 1 < N && map[ny + 1][nx] != '*') {
-                            q.add(new State(nx, ny + 1, now.mirror + 1));
-                        }
-
-                        if (ny - 1 > -1 && map[ny - 1][nx] != '*') {
-                            q.add(new State(nx, ny - 1, now.mirror + 1));
-                        }
-
-                    }
-
-                    // 그냥 직진
-                    if (nx + d.x < N && nx + d.x < -1 && ny + d.y < N && ny + d.y > -1 && map[ny][nx] == '*') {
-                        q.add(new State(nx + d.x, nx + d.y, now.mirror));
-                    }
-
                 }
             }
+
+            // System.out.printf("%c | %s\n", now, state);
         }
 
     }
@@ -129,16 +100,44 @@ public class 거울설치 {
             this.y = y;
             this.direction = direction;
         }
+
+        public Direction[] turn() {
+            if (direction == 'L' || direction == 'R') {
+                return new Direction[] {
+                    new Direction(0, -1, 'U'),
+                    new Direction(0, 1, 'D')
+                };
+            }
+
+            return new Direction[] {
+                new Direction(-1, 0, 'L'),
+                new Direction(1, 0, 'R')
+            };
+        }
     }
 
     private static class State implements Comparable<State> {
         int x, y;
         int mirror;
+        Direction d;
 
-        public State(int x, int y, int mirror) {
+        public State(int x, int y, int mirror, Direction d) {
             this.x = x;
             this.y = y;
             this.mirror = mirror;
+            this.d = d;
+        }
+
+        public int nextX() {
+            return x + d.x;
+        }
+
+        public int nextY() {
+            return y + d.y;
+        }
+
+        public String mirror() {
+            return String.valueOf(mirror);
         }
 
         @Override
@@ -154,8 +153,8 @@ public class 거울설치 {
         @Override
         public String toString() {
             return "State{" +
-                "x=" + x +
-                ", y=" + y +
+                "y=" + y +
+                ", x=" + x +
                 ", mirror=" + mirror +
                 '}';
         }
