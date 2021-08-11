@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
@@ -20,61 +21,35 @@ public class 앱 {
         StringTokenizer st = new StringTokenizer(r.readLine());
         int N = parse(st.nextToken());
         int M = parse(st.nextToken());
+        int answer = Integer.MAX_VALUE;
 
-        st = new StringTokenizer(r.readLine());
         int[] memories = new int[N];
-        for (int i = 0; i < N; i++) {
-            memories[i] = parse(st.nextToken());
-        }
-
-        st = new StringTokenizer(r.readLine());
         int[] costs = new int[N];
+        int[] dp = new int[10_001];
+
+        StringTokenizer mem = new StringTokenizer(r.readLine());
+        StringTokenizer co = new StringTokenizer(r.readLine());
         for (int i = 0; i < N; i++) {
-            costs[i] = parse(st.nextToken());
+            memories[i] = parse(mem.nextToken());
+            costs[i] = parse(co.nextToken());
         }
 
-        PriorityQueue<App> pq = new PriorityQueue<>();
         for (int i = 0; i < N; i++) {
-            pq.add(new App(memories[i], costs[i]));
+            int memory = memories[i];
+            int cost = costs[i];
+
+            for (int j = 10_000; j >= cost; j--) {
+                dp[j] = Math.max(dp[j - cost] + memory, dp[j]);
+            }
         }
 
-        int answer = 0;
-        while (M > 0) {
-            App min = pq.poll();
-            answer += min.cost;
-            M -= min.memory;
+        for (int i = 0; i <= 10_000; i++) {
+            if (dp[i] >= M) {
+                System.out.println(i);
+                break;
+            }
         }
 
-        w.write(String.valueOf(answer));
-        w.flush();
-    }
-
-    private static class App implements Comparable<App> {
-        int memory;
-        int cost;
-
-        public App(int memory, int cost) {
-            this.memory = memory;
-            this.cost = cost;
-        }
-
-        @Override
-        public int compareTo(App left) {
-            // 코스트 오름차순
-            if (cost > left.cost)
-                return 1;
-            if (cost < left.cost)
-                return -1;
-
-            // 코스트가 같을때 메모리는 내림차순
-            if (memory > left.memory)
-                return -1;
-            if (memory < left.memory)
-                return 1;
-
-            // 둘 다 같을 땐 안바꿈
-            return 0;
-        }
     }
 
     private static int parse(String s) {
