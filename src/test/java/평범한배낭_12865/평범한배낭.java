@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,34 +22,27 @@ public class 평범한배낭 {
         BufferedReader r = new BufferedReader(new FileReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\평범한배낭_12865\\input.txt"));
         BufferedWriter w = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        // N K 입력 받기
-        String[] nk = r.readLine().split(" ");
-        int N = parse(nk[0]);
-        int K = parse(nk[1]);
+        StringTokenizer st = new StringTokenizer(r.readLine());
+        int N = parse(st.nextToken());
+        int W = parse(st.nextToken());
 
-        int[] W = new int[N + 1];
+        int[] _W = new int[N + 1];
         int[] V = new int[N + 1];
-        int[][] dp = new int[N + 1][K + 1];
+        int[] dp = new int[W + 1];
 
         for (int i = 1; i <= N; i++) {
-            String[] WV = r.readLine().split(" ");
-            W[i] = parse(WV[0]);
-            V[i] = parse(WV[1]);
+            st = new StringTokenizer(r.readLine());
+            _W[i] = Integer.parseInt(st.nextToken());
+            V[i] = Integer.parseInt(st.nextToken());
         }
 
         for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= K; j++) {
-
-                if (W[i] > j) {
-                    dp[i][j] = dp[i - 1][j];
-                }
-                else {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - W[i]] + V[i]);
-                }
-
+            for (int j = W; j - _W[i] >= 0; j--) {
+                dp[j] = Math.max(dp[j], dp[j - _W[i]] + V[j]);
             }
         }
-        w.write(String.valueOf(dp[N][K]));
+
+        w.write(String.format(String.valueOf(dp[W])));
         w.flush();
     }
 
