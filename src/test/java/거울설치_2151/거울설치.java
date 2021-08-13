@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class 거울설치 {
 
-    private static State start = null;
+    private static State start = null, end = null;
 
     private static Direction[] directions = {
         new Direction(-1, 0, 'L'),
@@ -30,17 +30,21 @@ public class 거울설치 {
         int N = Integer.parseInt(r.readLine());
 
         char[][] map = new char[N][N];
-        for (int _x = 0; _x < N; _x++) {
+        for (int _y = 0; _y < N; _y++) {
 
-            map[_x] = r.readLine().toCharArray();
-            for (int _y = 0; _y < N; _y++) {
+            map[_y] = r.readLine().toCharArray();
+            for (int _x = 0; _x < N; _x++) {
 
                 // 아직 start가 없으면
-                if (Objects.isNull(start)) {
+
+                if (Objects.isNull(start) && map[_y][_x] == '#') {
                     // 시작 위치 저장
-                    if (map[_y][_x] == '#') {
-                        start = new State(_x, _y, 0, null);
-                    }
+                    start = new State(_x, _y, 0, null);
+                    continue;
+                }
+
+                if (Objects.isNull(end) && map[_y][_x] == '#') {
+                    end = new State(_x, _y, 0, null);
                 }
 
             }
@@ -64,11 +68,13 @@ public class 거울설치 {
         while (!q.isEmpty()) {
             State state = q.poll();
             char now = map[state.y][state.x];
-            if (now == '#') {
+
+            if (state.equals(end)) {
                 w.write(state.mirror());
                 w.flush();
                 return;
             }
+
 
             if (now == '.') {
                 q.add(new State(state.nextX(), state.nextY(), state.mirror, state.d));
@@ -76,6 +82,10 @@ public class 거울설치 {
 
             if (now == '!') {
 
+                // 직진, 거울 설치 X
+                q.add(new State(state.nextX(), state.nextY(), state.mirror, state.d));
+
+                // 90도 회전, 거울 설치
                 for (Direction d : state.d.turn()) {
                     int nx = state.x + d.x;
                     int ny = state.y + d.y;
@@ -138,6 +148,10 @@ public class 거울설치 {
 
         public String mirror() {
             return String.valueOf(mirror);
+        }
+
+        public boolean equals(State s) {
+            return x == s.x && y == s.y;
         }
 
         @Override
