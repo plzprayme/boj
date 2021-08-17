@@ -28,6 +28,7 @@ public class 가장긴증가하는부분수열4 {
 
         int[] dp = new int[N];
         for (int y = 1; y < N; y++) {
+            // 자기 자신은 여기서
             dp[y] = 1;
             for (int x = 1; x < y; x++) {
                 if (nums[y] > nums[x]) dp[y] = Math.max(dp[y], dp[x] + 1);
