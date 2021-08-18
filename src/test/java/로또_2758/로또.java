@@ -3,8 +3,6 @@ package 로또_2758;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -53,35 +51,28 @@ public class 로또 {
     }
 
     private static class State {
-        Stack<Integer> numbers = new Stack<>();
+        int num;
         int N;
 
-        public State(int start, int n) {
-            numbers.add(start);
-            N = n;
-        }
-
-        private State(Stack<Integer> numbers, int n) {
-            this.numbers = numbers;
+        public State(int num, int n) {
+            this.num = num;
             N = n;
         }
 
         public int nextNumber() {
-            return numbers.peek() * 2;
+            return num * 2;
+            // return numbers.peek() * 2;
         }
 
         public State get(int next) {
-            Stack<Integer> stack = new Stack<>();
-            for (int i : numbers)
-                stack.add(i);
-            stack.add(next);
-            return new State(stack, N - 1);
+            num = next;
+            return new State(num, N - 1);
         }
 
         @Override
         public String toString() {
             return "State{" +
-                "numbers=" + numbers +
+                "num=" + num +
                 ", N=" + N +
                 '}';
         }
