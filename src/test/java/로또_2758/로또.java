@@ -20,24 +20,30 @@ public class 로또 {
             int N = parse(st.nextToken());
             int M = parse(st.nextToken());
 
-            Stack<State> answer = new Stack<>();
-            for (int i = 1; i * pow(N - 1) <= M; i++) {
-                answer.add(new State(i, N - 1));
+            int[][] dp = new int[N+1][M+1];
+
+            int weight = pow(N - 1);
+            for (int i = 1; i * weight <= M; i++) {
+                dp[1][i]++;
             }
 
-            int count = 0;
-            while (!answer.isEmpty()) {
-                State s = answer.pop();
-                int currentN = s.N;
-                if (currentN == 0) {
-                    count++;
-                } else {
-                    for (int i = s.nextNumber(); i * pow(currentN - 1) <= M; i++) {
-                        answer.add(s.get(i));
+            for (int i = 1; i < N; i++) {
+                for (int j = 1; j <= M; j++) {
+                    int currentValue = dp[i][j];
+                    int next = j * 2;
+                    if (currentValue > 0 && next <= M) {
+                        for (int k = next; k * pow(N - i - 1) <= M; k++) {
+                            dp[i+1][k] += currentValue;
+                        }
                     }
                 }
             }
-            System.out.println(count);
+            int sum = 0;
+            for (int i = M / 2; i <= M; i++) {
+                sum += dp[N][i];
+            }
+            System.out.println(sum);
+
         }
 
     }
