@@ -20,67 +20,25 @@ public class 로또 {
             int N = parse(st.nextToken());
             int M = parse(st.nextToken());
 
-            int[][] dp = new int[N+1][M+1];
-
-            int weight = pow(N - 1);
-            for (int i = 1; i * weight <= M; i++) {
-                dp[1][i]++;
+            long[][] dp = new long[N + 1][M + 1];
+            for (int i = 0; i <= M; i++) {
+                dp[0][i]++;
             }
 
-            for (int i = 1; i < N; i++) {
+            for (int i = 1; i <= N; i++) {
                 for (int j = 1; j <= M; j++) {
-                    int currentValue = dp[i][j];
-                    int next = j * 2;
-                    if (currentValue > 0 && next <= M) {
-                        for (int k = next; k * pow(N - i - 1) <= M; k++) {
-                            dp[i+1][k] += currentValue;
-                        }
-                    }
+                    // 그림 참고 https://boomrabbit.tistory.com/36
+                    // j / 2 가 핵심 아이디어
+                    dp[i][j] = dp[i - 1][j / 2] + dp[i][j - 1];
                 }
             }
-            int sum = 0;
-            for (int i = M / 2; i <= M; i++) {
-                sum += dp[N][i];
-            }
-            System.out.println(sum);
-
+            System.out.println(dp[N][M]);
         }
 
-    }
-
-    private static int pow(int N) {
-        return (int)Math.pow(2, N);
     }
 
     private static int parse(String s) {
         return Integer.parseInt(s);
     }
 
-    private static class State {
-        int num;
-        int N;
-
-        public State(int num, int n) {
-            this.num = num;
-            N = n;
-        }
-
-        public int nextNumber() {
-            return num * 2;
-            // return numbers.peek() * 2;
-        }
-
-        public State get(int next) {
-            num = next;
-            return new State(num, N - 1);
-        }
-
-        @Override
-        public String toString() {
-            return "State{" +
-                "num=" + num +
-                ", N=" + N +
-                '}';
-        }
-    }
 }
