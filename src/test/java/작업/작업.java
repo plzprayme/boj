@@ -141,7 +141,7 @@ public class 작업 {
                 indegree[next]--;
 
                 // 부모 작업의의
-               result[next] = Math.max(result[next], result[now] + time[now]);
+               result[next] = Math.max(result[next], result[now] + time[next]);
 
                // 부모 작업의 사전 작업이 모두 완료 되었다면 큐에 넣음
                if (indegree[next] == 0) {
