@@ -24,25 +24,25 @@ public class 작업 {
         int N = parse(r.readLine());
         int[] dp = new int[N + 1];
 
+        int answer = 0;
         for (int i = 1; i < N + 1; i++) {
             StringTokenizer st = new StringTokenizer(r.readLine());
             int time = parse(st.nextToken());
             int pre = parse(st.nextToken());
 
-            if (pre == 0) {
-                dp[i] = time;
-            } else {
-                int longest = 0;
-                for (int j = 0; j < pre; j++) {
-                    int index = parse(st.nextToken());
-                    longest = Math.max(longest, dp[index]);
-                }
-                dp[i] = longest + time;
+            dp[i] = time;
+            for (int j = 0; j < pre; j++) {
+                int temp = parse(st.nextToken());
+                // dp[temp] + time = 사전 작업까지의 소요 시간 + 지금 작업의 소요시간
+                // dp[i] = 사전 작업들 중 가장 큰 값 (해당 루프에 들어오면 위에서 정의한 dp[i] 보다는 무조건 클 수 밖에 없음)
+                dp[i] = Math.max(dp[i], dp[temp] + time);
             }
 
+            // 전부 다 사전 작업이 없을 때를 대비
+            answer = Math.max(answer, dp[i]);
         }
 
-        System.out.println(dp[N]);
+        System.out.println(answer);
     }
 
     @Test
