@@ -67,46 +67,22 @@ public class 틱택토 {
             }
 
             if (countX == 5 && countO == 4) {
-                if (bingoO > 0) {
+                if (bingoO == 1) {
                     w.write("invalid");
                 } else {
                     w.write("valid");
                 }
-            } else if (countX == 4 && countO == 4) {
-                if (bingoO == 1 && bingoX == 1) {
-                    w.write("invalid");
-                } else if (bingoO == 0 && bingoX == 0) {
-                    w.write("invalid");
-                } else if (bingoO == 1) {
-                    w.write("invalid");
-                } else {
+            } else if (countX == countO) {
+                if (bingoO == 1 && bingoX == 0) {
                     w.write("valid");
+                } else {
+                    w.write("invalid");
                 }
-            } else if (countX == 3 && countO == 4) {
-                if (bingoO == 1 && bingoX == 1) {
-                    w.write("invalid");
-                } else if (bingoO == 0 && bingoX == 0) {
-                    w.write("invalid");
-                } else if (bingoX == 1) {
-                    w.write("invalid");
-                } else {
+            } else if (countX > countO) {
+                if (bingoO == 0 && bingoX == 1) {
                     w.write("valid");
-                }
-            } else if (countX == 3 && countO == 3) {
-                if (bingoO == 1 && bingoX == 1) {
-                    w.write("invalid");
-                } else if (bingoO == 0 && bingoX == 0) {
-                    w.write("invalid");
-                } else if (bingoX == 1) {
-                    w.write("invalid");
                 } else {
-                    w.write("valid");
-                }
-            } else if (countX == 3 && countO == 2) {
-                if (bingoX == 0) {
                     w.write("invalid");
-                } else {
-                    w.write("valid");
                 }
             } else {
                 w.write("invalid");
