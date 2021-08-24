@@ -19,6 +19,7 @@ public class 틱택토 {
             char[] line = r.readLine().toCharArray();
             if (line[0] == 'e') break;
 
+            // X, O 세기
             int countX = 0;
             int countO = 0;
             for (char c : line) {
@@ -28,8 +29,10 @@ public class 틱택토 {
                     countO++;
             }
 
+            // 빙고 찾기
             int bingoX = 0;
             int bingoO = 0;
+            // 가로
             for (int i = 0; i < 9; i = i + 3) {
                 if (line[i] == line[i + 1] && line[i + 1] == line[i + 2]) {
                     if (line[i] == 'X') {
@@ -39,7 +42,7 @@ public class 틱택토 {
                     }
                 }
             }
-
+            // 세로
             for (int i = 0; i < 3; i++) {
                 if (line[i] == line[i+3] && line[i+3] == line[i+6]) {
                     if (line[i] == 'X') {
@@ -49,7 +52,7 @@ public class 틱택토 {
                     }
                 }
             }
-
+            // 대각 \
             if (line[0] == line[4] && line[4] == line[8]) {
                 if (line[0] == 'X') {
                     bingoX++;
@@ -57,7 +60,7 @@ public class 틱택토 {
                     bingoO++;
                 }
             }
-
+            // 대각 /
             if (line[2] == line[4] && line[4] == line[6]) {
                 if (line[2] == 'X') {
                     bingoX++;
@@ -66,25 +69,35 @@ public class 틱택토 {
                 }
             }
 
+            // O가 빙고면 안됨
+            // X는 빙고가 0 , 1, 2 아무거나 상관 없음
             if (countX == 5 && countO == 4) {
                 if (bingoO == 1) {
                     w.write("invalid");
                 } else {
                     w.write("valid");
                 }
-            } else if (countX == countO) {
+            }
+            // X와 O가 같을 때 중 가능한 경우는 각각 4와 3일 때 밖에 없음
+            else if ((countX == 4 && countO == 4) || (countX == 3 && countO == 3)) {
+                // O가 이겨야됨
                 if (bingoO == 1 && bingoX == 0) {
                     w.write("valid");
                 } else {
                     w.write("invalid");
                 }
-            } else if (countX > countO) {
+            }
+            // 4 3 / 3 2 인 경우 밖에 없음
+            else if ((countX == 4 && countO == 3) || (countX == 3 && countO == 2)) {
+                // X가 이겨야됨
                 if (bingoO == 0 && bingoX == 1) {
                     w.write("valid");
                 } else {
                     w.write("invalid");
                 }
-            } else {
+            }
+            // 그 외 O가 더 많거나, X만 왕창 있거나 빙고가 성립이 안됐는데 게임이 끝난 경우
+            else {
                 w.write("invalid");
             }
 
