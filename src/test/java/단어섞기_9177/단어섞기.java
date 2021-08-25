@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -33,38 +34,42 @@ public class 단어섞기 {
     }
 
     private static String validate(String s1, String s2, String s3) {
+        PriorityQueue<State> pq = new PriorityQueue<>();
+        pq.add(new State(0, 0, 0));
 
-        Stack<State> s = new Stack<>();
-        s.push(new State(0, 0));
-
-        for (char c : s3.toCharArray()) {
-            if (s.empty())
-                return "no";
-
-            State now = s.pop();
+        while (!pq.isEmpty()) {
+            State now = pq.poll();
             int i1 = now.i1;
             int i2 = now.i2;
+            int i3 = now.i3;
+            if (i3 == s3.length()) return "yes";
+
+            char c = s3.charAt(i3);
             if (i1 < s1.length() && i2 < s2.length() &&  c == s1.charAt(i1) && c == s2.charAt(i2)) {
-                s.push(new State(i1 + 1, i2));
-                s.push(new State(i1, i2 + 1));
+                pq.add(new State(i1 + 1, i2, i3 + 1));
+                pq.add(new State(i1, i2 + 1, i3 + 1));
             } else if (i1 < s1.length() && c == s1.charAt(i1)) {
-                s.push(new State(i1 + 1, i2));
+                pq.add(new State(i1 + 1, i2, i3 + 1));
             } else if (i2 < s2.length() && c == s2.charAt(i2)) {
-                s.push(new State(i1, i2 + 1));
-            } else {
-                return "no";
+                pq.add(new State(i1, i2 + 1, i3 + 1));
             }
         }
 
-        return "yes";
+        return "no";
     }
 
-    private static class State {
-        int i1, i2;
+    private static class State implements Comparable<State> {
+        int i1, i2, i3;
 
-        public State(int i1, int i2) {
+        public State(int i1, int i2, int i3) {
             this.i1 = i1;
             this.i2 = i2;
+            this.i3 = i3;
+        }
+
+        @Override
+        public int compareTo(State o) {
+            return Integer.compare(o.i3, i3);
         }
     }
 }

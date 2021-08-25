@@ -1,5 +1,4 @@
-4
-ac b acb
-a bc acb
-a bc abc
-a bc bac
+3
+cat tree tcraete
+cat tree catrtee
+cat tree cttaree
