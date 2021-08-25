@@ -1,4 +1,2 @@
-3
-a a aa
-a b ab
-b a ac
+1
+acs acbs acacbss
