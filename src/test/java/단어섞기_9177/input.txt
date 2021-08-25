@@ -1,0 +1,5 @@
+4
+ac b acb
+a bc acb
+a bc abc
+a bc bac
