@@ -1,8 +1,5 @@
 package 카카오기출;
 
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -46,67 +43,57 @@ public class 표편집 {
     }
 
     public String solution(int n, int k, String[] cmd) {
-        LinkedList<Row> list = new LinkedList<>();
-        Stack<Row> undo = new Stack<>();
+        int[] pre = new int[n];
+        int[] next = new int[n];
+
         for (int i = 0; i < n; i++) {
-            list.add(new Row(i, i));
+            pre[i] = i - 1;
+            next[i] = i + 1;
         }
+        next[n - 1] = -1;
 
-        int cursor = k;
-        for (String c : cmd) {
-            StringTokenizer st = new StringTokenizer(c);
-
+        Stack<Node> stack = new Stack<>();
+        StringBuilder sb = new StringBuilder("O".repeat(n));
+        for (int i = 0; i < cmd.length; i++) {
+            StringTokenizer st = new StringTokenizer(cmd[i]);
             String action = st.nextToken();
+
             if (action.equals("U")) {
-                cursor -= Integer.parseInt(st.nextToken());
+                int step = Integer.parseInt(st.nextToken());
+                while (step-- > 0) {
+                    k = pre[k];
+                }
             } else if (action.equals("D")) {
-                cursor += Integer.parseInt(st.nextToken());
+                int step = Integer.parseInt(st.nextToken());
+                while (step-- > 0) {
+                    k = next[k];
+                }
             } else if (action.equals("C")) {
-                Row now = list.get(cursor);
-                undo.add(new Row(cursor, now.num));
-                list.remove(cursor);
+                stack.add(new Node(pre[k], k, next[k]));
+                if (pre[k] != -1) next[pre[k]] = next[k];
+                if (next[k] != -1) pre[next[k]] = pre[k];
+                sb.setCharAt(k, 'X');
 
-                // 맨 마지막을 지웠을 떄 커서 한칸 내리기
-                if (list.size() <= cursor) cursor--;
+                if (next[k] != -1) k = next[k];
+                else k = pre[k];
             } else if (action.equals("Z")) {
-                Row pre = undo.pop();
-                list.add(pre.cursor, pre);
-
-                // 커서보다 앞에 추가했을 때 커서 한칸 위로
-                if (pre.cursor <= cursor) cursor++;
+                Node node = stack.pop();
+                if (node.pre != -1) next[node.pre] = node.cur;
+                if (node.next != -1) pre[node.next] = node.cur;
+                sb.setCharAt(node.cur, 'O');
             }
         }
-
-        boolean[] isSame = new boolean[n];
-        Deque<Row> dq = new LinkedList<>(list);
-        while (!dq.isEmpty()) {
-            isSame[dq.poll().num] = true;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (boolean b : isSame) {
-            if (b) sb.append('O');
-            else sb.append('X');
-        }
-
         return sb.toString();
     }
 
-    class Row {
-        int cursor;
-        int num;
+    public class Node {
+        int pre, cur, next;
 
-        public Row(int cursor, int num) {
-            this.cursor = cursor;
-            this.num = num;
-        }
-
-        @Override
-        public String toString() {
-            return "Row{" +
-                "cursor=" + cursor +
-                ", num=" + num +
-                '}';
+        public Node(int pre, int cur, int next) {
+            this.pre = pre;
+            this.cur = cur;
+            this.next = next;
         }
     }
+
 }
