@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 public class 문제6 {
     public int solution(int[][] board, int[][] skill) {
 
-        int answer = board[0].length * board.length;
+        // int answer = board[0].length * board.length;
 
         for (int[] s : skill) {
             if (s[0] == 1) {
@@ -18,14 +18,15 @@ public class 문제6 {
             int cmx = Math.max(s[2], s[4]);
             for (int r = rmn; r <= rmx; r++) {
                 for (int c = cmn; c <= cmx; c++) {
-                    if (board[r][c] > 0) {
-                        board[r][c] += s[5];
-                        if (board[r][c] <= 0) answer--;
-                    } else {
-                        board[r][c] += s[5];
-                        if (board[r][c] > 0) answer++;
-                    }
+                    board[r][c] += s[5];
                 }
+            }
+        }
+
+        int answer = 0;
+        for (int[] i : board) {
+            for (int j : i) {
+                if (j > 0) answer++;
             }
         }
 
