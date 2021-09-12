@@ -21,6 +21,7 @@ public class 문제6 {
                     board[r][c] += s[5];
                 }
             }
+
         }
 
         int answer = 0;
