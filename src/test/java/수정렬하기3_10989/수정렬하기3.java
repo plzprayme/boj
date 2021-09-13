@@ -20,6 +20,7 @@ public class 수정렬하기3 {
             count[parse(r.readLine())]++;
         }
 
+
         for (int i = 1; i <= 10000; i++) {
             for (int j = 0; j < count[i]; j++) {
                 w.write(String.format("%d\n", i));
