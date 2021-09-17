@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ class Main {
 
         dp = new int[N + 1];
         Arrays.fill(dp, 300_001);
+        dp[start] = 0;
 
         node = new List[N + 1];
         for (int i = 0; i <= N; i++) {
@@ -41,7 +44,22 @@ class Main {
             node[from].add(to);
         }
 
-        dfs(start, 0);
+        Queue<Integer> q = new LinkedList<>();
+        q.add(start);
+        while (!q.isEmpty()) {
+            int now = q.poll();
+
+            List<Integer> to = node[now];
+            for (int i = 0; i < to.size(); i++) {
+                int next = to.get(i);
+
+                if (dp[next] == 300_001) {
+                    dp[next] = dp[now] + 1;
+                    q.offer(next);
+                }
+            }
+
+        }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= N; i++) {
@@ -58,16 +76,7 @@ class Main {
         }
     }
 
-    static void dfs(int from, int count) {
-        if (count > K) return;
-        if (dp[from] != 300_001) return;
-        dp[from] = count;
 
-        List<Integer> to = node[from];
-        for (int i = 0; i < to.size(); i++) {
-            dfs(to.get(i), count + 1);
-        }
-    }
 
     static int parse(String s) {
         return Integer.parseInt(s);
