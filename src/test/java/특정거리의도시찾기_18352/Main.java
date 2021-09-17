@@ -60,7 +60,8 @@ class Main {
 
     static void dfs(int from, int count) {
         if (count > K) return;
-        dp[from] = Math.min(dp[from], count);
+        if (dp[from] != 300_001) return;
+        dp[from] = count;
 
         List<Integer> to = node[from];
         for (int i = 0; i < to.size(); i++) {
