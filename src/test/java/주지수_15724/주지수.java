@@ -21,11 +21,9 @@ class 주지수 {
         int X = parse(st.nextToken());
         int[][] map = new int[Y + 1][X + 1];
         for (int y = 1; y <= Y; y++) {
-            int tmp = 0;
             st = new StringTokenizer(r.readLine());
             for (int x = 1; x <= X; x++) {
-                tmp += parse(st.nextToken());
-                map[y][x] = tmp;
+                map[y][x] = map[y - 1][x] + map[y][x - 1] - map[y - 1][x - 1] + parse(st.nextToken());
             }
         }
 
@@ -37,18 +35,7 @@ class 주지수 {
             int y2 = parse(st.nextToken());
             int x2 = parse(st.nextToken());
 
-            int tmp = 0;
-            if (x1 == 1) {
-                for (int y = y1; y <= y2; y++) {
-                    tmp += map[y][x2];
-                }
-            } else {
-                for (int y = y1; y <= y2; y++) {
-                    tmp += map[y][x2] - map[y][x1 - 1];
-                }
-            }
-
-            System.out.println(tmp);
+            System.out.println(map[y2][x2] - (map[y2][x1-1] + map[y1-1][x2]) + map[y1-1][x1-1]);
         }
 
     }
