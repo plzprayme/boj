@@ -3,6 +3,7 @@ package 연산자끼워넣기_14888;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class 연산자끼워넣기 {
         }
 
 
-        rec(0);
+        rec(0, nums[0]);
 
         System.out.println(max);
         System.out.println(min);
@@ -50,21 +51,23 @@ public class 연산자끼워넣기 {
         return Integer.parseInt(s);
     }
 
-    static void rec(int o) {
+    static void rec(int o, int value) {
         if (o == N - 1) {
-            int left = nums[0];
-            for (int i = 0; i < N - 1; i++) {
-                left = go(left, nums[i + 1], selected[i]);
-            }
+            // int left = nums[0];
+            // for (int i = 0; i < N - 1; i++) {
+            //     left = go(left, nums[i + 1], selected[i]);
+            // }
 
-            max = Math.max(max, left);
-            min = Math.min(min, left);
+            // max = Math.max(max, left);
+            // min = Math.min(min, left);
+            max = Math.max(max, value);
+            min = Math.min(min, value);
         } else {
             for (int i = 0; i < N - 1; i++) {
                 if (!visited[i]) {
                     visited[i] = true;
                     selected[o] = operations[i];
-                    rec( o + 1);
+                    rec( o + 1, go(value, nums[o + 1], operations[i]));
                     visited[i] = false;
                 }
             }
