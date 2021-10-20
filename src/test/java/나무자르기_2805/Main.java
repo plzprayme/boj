@@ -19,32 +19,38 @@ public class Main {
 
         st = new StringTokenizer(r.readLine());
         int[] trees = new int[N + 1];
-        for (int i = 1; i <= N; i++) trees[i] = Integer.parseInt(st.nextToken());
-        Arrays.sort(trees, 1, trees.length);
+        int min = 0;
+        int max = 0;
+        for (int i = 1; i <= N; i++) {
+            trees[i] = Integer.parseInt(st.nextToken());
+            max = Math.max(trees[i], max);
+        }
+        Arrays.sort(trees, 1, N + 1);
 
-        int H = trees[N] - 1;
-        int answer = solution(trees, H, M);
-        System.out.println(answer);
+        min = bSearch(N, M, trees, min, max);
+        System.out.println(min - 1);
+
     }
 
-    private static int solution(int[] trees, int H, int M) {
-        while (H >= 0) {
-            if (go(trees, H) >= M) return H;
+    private static int bSearch(int N, int M, int[] trees, int min, int max) {
+        while (min < max) {
+            int mid = min + (max - min) / 2;
 
-            H--;
+            long sum = sum(N, trees, mid);
+
+            if (sum < M) max = mid - 1;
+            else min = mid + 1;
         }
-        return H;
+        return min;
     }
 
-    private static int go(int[] trees, int h) {
-
-        int now = 0;
-        for (int i = trees.length - 1; i >= 0; i--) {
-            if (trees[i] < h) return now;
-
-            now += trees[i] - h;
+    private static long sum(int N, int[] trees, int mid) {
+        long sum = 0;
+        for (int i = N; i >= 0; i--) {
+            if (trees[i] - mid <= 0) break;
+            sum += trees[i] - mid;
         }
-        return now;
+        return sum;
     }
 
 }
