@@ -12,7 +12,7 @@ public class 두수의합 {
     @Test
     public static void main(String[] args) throws IOException {
         BufferedReader r = new BufferedReader(new FileReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\두수의합_3273\\input.txt"));
-        
+
         int N = Integer.parseInt(r.readLine());
         StringTokenizer st = new StringTokenizer(r.readLine());
         int[] nums = new int[N + 1];
