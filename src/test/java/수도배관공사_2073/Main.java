@@ -12,18 +12,7 @@ class Main {
     static long[] dp;
 
     private static void solution() {
-
-        for (Pipe p : pipes) {
-
-            for (int i = 1; i <= p.l; i++) {
-                if (i == p.l) dp[p.l] = Math.min(dp[p.l], p.c);
-                else if (i + p.l <= P) dp[i + p.l] = Math.min(dp[i + p.l], dp[i] + p.c);
-            }
-
-        }
-
         System.out.println(dp[D]);
-
     }
 
     private static void input() throws IOException {
@@ -31,14 +20,21 @@ class Main {
         StringTokenizer st = new StringTokenizer(r.readLine());
         D = Integer.parseInt(st.nextToken()); P = Integer.parseInt(st.nextToken());
         dp = new long[D + 1];
-        Arrays.fill(dp, Long.MAX_VALUE);
+        dp[0] = Integer.MAX_VALUE;
+
         pipes = new Pipe[P];
 
         for (int i = 0; i < P; i++) {
             st = new StringTokenizer(r.readLine());
-            pipes[i] = new Pipe(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+
+            int l = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+
+            // 여기가 솔루션
+            for (int j = D; j >= l; j--) {
+                dp[j] = Math.max(dp[j], Math.min(c, dp[j - l]));
+            }
         }
-        Arrays.sort(pipes);
     }
 
     private static class Pipe implements Comparable<Pipe> {
