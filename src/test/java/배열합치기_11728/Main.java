@@ -12,18 +12,10 @@ class Main {
     static int[] answer, A, B;
 
     private static void solution() {
-        int right = 0, main = 0;
-        for (int left = 0; left < N; left++) {
-            while (right < M && A[left] > B[right]) {
-                answer[main++] = B[right++];
-            }
-
-            answer[main++] = A[left];
-        }
-
-        while (right < M) {
-            answer[main++] = B[right++];
-        }
+        int c = 0;
+        for (int i : A) answer[c++] = i;
+        for (int i : B) answer[c++] = i;
+        Arrays.sort(answer);
 
         StringBuilder sb = new StringBuilder();
         for (int i : answer) sb.append(i).append(' ');
