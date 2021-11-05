@@ -8,52 +8,44 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N, M, V;
-    static PriorityQueue[] node1;
-    static PriorityQueue[] node2;
+    static List<Integer>[] adj;
     static boolean visited[];
     static StringBuilder sb;
 
     private static void solution() {
-        visited = new boolean[N + 1];
-        sb = new StringBuilder();
         dfs(V);
-        System.out.println(sb);
+        sb.append('\n');
 
         visited = new boolean[N + 1];
-        sb = new StringBuilder();
         bfs(V);
         System.out.println(sb);
     }
 
-    private static void bfs(int start) {
-        Queue<Integer> queue = new LinkedList<>();
+    // 여기는 탐색 가능하다고 보장
+    private static void dfs(int start) {
         visited[start] = true;
         sb.append(start).append(' ');
-        while (!node2[start].isEmpty()) {
-            int now = (int) node2[start].poll();
-            queue.offer(now);
-        }
 
-        while (!queue.isEmpty()) {
-            int now = queue.poll();
-            if (visited[now]) continue;
-
-            visited[now] = true;
-            sb.append(now).append(' ');
-            while (!node2[now].isEmpty()) {
-                int next = (int) node2[now].poll();
-                queue.offer(next);
-            }
+        for (int i : adj[start]) {
+            if (visited[i]) continue;
+            dfs(i);
         }
     }
 
-    private static void dfs(int start) {
-        if (visited[start]) return;
+    private static void bfs(int start) {
+        Queue<Integer> q = new LinkedList<>();
 
+        q.offer(start);
         visited[start] = true;
         sb.append(start).append(' ');
-        while (!node1[start].isEmpty()) {
-            dfs((int) node1[start].poll());
+
+        while (!q.isEmpty()) {
+            for (int i : adj[q.poll()]) {
+                if (visited[i]) continue;
+                q.add(i);
+                visited[i] = true;
+                sb.append(i).append(' ');
+            }
         }
 
     }
@@ -64,24 +56,22 @@ class Main {
         N = r.nextInt();
         M = r.nextInt();
         V = r.nextInt();
-        node1 = new PriorityQueue[N + 1];
-        node2 = new PriorityQueue[N + 1];
+        adj = new ArrayList[N + 1];
+        visited = new boolean[N + 1];
+        sb = new StringBuilder();
 
         for (int i = 1; i <= N; i++) {
-            node1[i] = new PriorityQueue<Integer>();
-            node2[i] = new PriorityQueue<Integer>();
+            adj[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < M; i++) {
             r.readLine();
-            int left = r.nextInt();
-            int right = r.nextInt();
-            node1[left].add(right);
-            node1[right].add(left);
-
-            node2[left].add(right);
-            node2[right].add(left);
+            int left = r.nextInt(), right = r.nextInt();
+            adj[left].add(right);
+            adj[right].add(left);
         }
+
+        for (int i = 1; i <= N; i++) Collections.sort(adj[i]);
     }
 
     @Test
