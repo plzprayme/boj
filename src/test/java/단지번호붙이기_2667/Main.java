@@ -21,7 +21,7 @@ class Main {
                 if (visit[i][j]) continue;
 
                 if (map[i][j] == '1') {
-                    int count = bfs(i, j);
+                    int count = dfs(i, j);
                     answer.add(count);
                 }
 
@@ -34,6 +34,21 @@ class Main {
         sb.append(answer.size()).append('\n');
         for (int i : answer) sb.append(i).append('\n');
         System.out.println(sb);
+    }
+
+    private static int dfs(int y, int x) {
+        visit[y][x] = true;
+
+        int count = 0;
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (isOut(nx) || isOut(ny) || visit[ny][nx] || map[ny][nx] == '0') continue;
+            count += dfs(ny, nx);
+        }
+
+        return count + 1;
     }
 
     private static int bfs(int y, int x) {
