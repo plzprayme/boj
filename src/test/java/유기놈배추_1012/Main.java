@@ -26,7 +26,8 @@ class Main {
             for (int i = 0; i < M; i++) {
                 for (int j = 0; j < N; j++) {
                     if (map[i][j] && !visit[i][j]) {
-                        bfs(i, j);
+                        // bfs(i, j);
+                        dfs(i, j);
                         count++;
                     }
                 }
@@ -49,9 +50,21 @@ class Main {
                 int nx = now.x + dx[i];
                 int ny = now.y + dy[i];
 
-                if (isOut(nx, ny) || visit[ny][nx] || !map[ny][nx]) continue;
+                if (isOut(nx, ny) || visit[ny][nx] || !map[ny][nx])
+                    continue;
                 stack.add(new Point(nx, ny));
             }
+        }
+    }
+
+    private static void dfs(int y, int x) {
+        visit[y][x] = true;
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (isOut(nx, ny) || visit[ny][nx] || !map[ny][nx]) continue;
+            dfs(ny, nx);
         }
     }
 
