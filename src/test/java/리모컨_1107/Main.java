@@ -8,56 +8,32 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N, M;
-    static int[] nums;
-    static Set<Integer> buttons;
-
-    static int startChannel = 100;
+    static Set<Integer> broken;
     static int count;
 
     private static void solution() {
-        if (M == 10) {
-            System.out.println(Math.abs(N - startChannel));
-            return;
-        }
-
-        if (M == 0) {
-            int a = Math.abs(N - startChannel);
-            int b = String.valueOf(N).length();
-            System.out.println(Math.min(a, b));
-            return;
-        }
-
-        count = Math.abs(N - startChannel);
-        int limit = N * 2;
-        if (N < 100) limit = 100 * 2;
-        s: for (int i = 0; i < limit; i++) {
-
-            String s = String.valueOf(i);
-            for (int j = 0; j < s.length(); j++) {
-                if (!buttons.contains(s.charAt(j) - '0')) continue s;
-            }
-
-            count = Math.min(count, s.length() + Math.abs(i - N));
-        }
-
+        count = Math.abs(N - 100);
+        rec(1, 0);
         System.out.println(count);
+    }
 
+    private static void rec(int n, int now) {
+        if (n == 7) return;
+        for (int i = 0; i < 10; i++) {
+            if (broken.contains(i)) continue;
+            int next = now * 10 + i;
+            count = Math.min(count, Math.abs(N - next) + n);
+            rec(n + 1, next);
+        }
     }
 
     private static void input() throws IOException {
         InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\리모컨_1107\\input.txt");
         N = r.nextInt();
         M = r.nextInt();
-        nums = new int[M];
-        buttons = new HashSet<>();
 
-        if (M == 0)
-            return;
-
-        for (int i = 0; i < 10; i++)
-            buttons.add(i);
-        for (int i = 0; i < M; i++)
-            buttons.remove(r.nextInt());
+        broken = new HashSet<>();
+        for (int i = 0; i < M; i++) broken.add(r.nextInt());
     }
 
     @Test
