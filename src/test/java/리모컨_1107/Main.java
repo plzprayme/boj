@@ -11,59 +11,53 @@ class Main {
     static int[] nums;
     static Set<Integer> buttons;
 
-    static int count = Integer.MAX_VALUE;
+    static int startChannel = 100;
+    static int count;
 
     private static void solution() {
-        if (N == 100) {
-            System.out.println(0);
-            return;
-        }
-
         if (M == 10) {
-            System.out.println(N - 100);
+            System.out.println(Math.abs(N - startChannel));
             return;
         }
 
-        for (int i = 0; i < 10; i++) buttons.add(i);
-        for (int i : nums) buttons.remove(i);
+        if (M == 0) {
+            int a = Math.abs(N - startChannel);
+            int b = String.valueOf(N).length();
+            System.out.println(Math.min(a, b));
+            return;
+        }
 
-
-        for (int i = 0; i <= N * 2; i++) {
+        count = Math.abs(N - startChannel);
+        int limit = N * 2;
+        if (N < 100) limit = 100 * 2;
+        s: for (int i = 0; i < limit; i++) {
 
             String s = String.valueOf(i);
-            boolean flag = true;
-            for (char c : s.toCharArray()) {
-                if (buttons.contains(c - '0')) continue;
-                flag = false;
+            for (int j = 0; j < s.length(); j++) {
+                if (!buttons.contains(s.charAt(j) - '0')) continue s;
             }
 
-            if (flag) {
-                if (i > N) {
-                    count = Math.min(count, s.length() + i - N);
-                }
-                else {
-                    count = Math.min(count, s.length() + N - i);
-                }
-            }
-
+            count = Math.min(count, s.length() + Math.abs(i - N));
         }
 
         System.out.println(count);
-
 
     }
 
     private static void input() throws IOException {
         InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\리모컨_1107\\input.txt");
-        N = r.nextInt(); M = r.nextInt();
+        N = r.nextInt();
+        M = r.nextInt();
         nums = new int[M];
         buttons = new HashSet<>();
 
-        if (M == 0) return;
-        for (int i = 0; i < M; i++) {
-            nums[i] = r.nextInt();
-        }
+        if (M == 0)
+            return;
 
+        for (int i = 0; i < 10; i++)
+            buttons.add(i);
+        for (int i = 0; i < M; i++)
+            buttons.remove(r.nextInt());
     }
 
     @Test
@@ -90,7 +84,8 @@ class Main {
         }
 
         public int nextInt() throws IOException {
-            if (!st.hasMoreTokens()) st = new StringTokenizer(r.readLine());
+            if (!st.hasMoreTokens())
+                st = new StringTokenizer(r.readLine());
             return Integer.parseInt(st.nextToken());
         }
 
