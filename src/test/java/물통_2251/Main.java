@@ -16,7 +16,8 @@ class Main {
 
 
     private static void solution() {
-        bfs(new Triple(0, 0, ABC[2]));
+        // bfs(new Triple(0, 0, ABC[2]));
+        dfs(new Triple(0, 0, ABC[2]));
 
 
         StringBuilder sb = new StringBuilder();
@@ -53,19 +54,17 @@ class Main {
     }
 
     private static void dfs(Triple now) {
-        if (now.isOK()) answer.add(now.c());
+        if (now.isOK()) answer[now.c()] = true;
 
-        for (int src = 0; src < 3; src++) {
-            for (int dst = 0; dst < 3; dst++) {
-                if (src == 0) break;
-                if (src == dst) continue;
-                // 8 9 10
-                // 0 0 10 // src 0 dst 0
-                // 0 0 10 // src 1 dst 0
-                // 0 0 10 // src 2 dst 0 -> 8 0 2
-
-            }
+        for (int i = 0; i < 6; i++) {
+            if (now.get(from[i]) == 0) continue;
+            if (now.get(to[i]) == ABC[to[i]]) continue;
+            Triple next = now.move(from[i], to[i], ABC);
+            if (isVisit(next)) continue;
+            setVisit(next);
+            dfs(next);
         }
+
 
     }
 
