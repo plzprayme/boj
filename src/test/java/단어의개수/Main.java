@@ -1,4 +1,4 @@
-package 리모컨_1107;
+package 단어의개수;
 
 import java.io.*;
 import java.util.*;
@@ -6,33 +6,22 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 
 class Main {
-
-    static int N, M;
-    static Set<Integer> broken;
-    static int count;
+    static String s;
 
     private static void solution() {
-        count = Math.abs(N - 100);
-        rec(1, 0);
+        String[] arr = s.split(" ");
+
+        int count = 0;
+        for (String s1 : arr) {
+            if (!s1.equals("")) count++;
+        }
+
         System.out.println(count);
     }
 
-    private static void rec(int n, int now) {
-        if (n == 7) return;
-        for (int i = 0; i < 10; i++) {
-            if (broken.contains(i)) continue;
-            int next = now * 10 + i;
-            count = Math.min(count, Math.abs(N - next) + n);
-            rec(n + 1, next);
-        }
-    }
-
     private static void input() throws IOException {
-        InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\리모컨_1107\\input.txt");
-        N = r.nextInt();
-        M = r.nextInt();
-        broken = new HashSet<>();
-        for (int i = 0; i < M; i++) broken.add(r.nextInt());
+        InputReader r = new InputReader();
+        s = r.readLine();
     }
 
     @Test
@@ -59,13 +48,16 @@ class Main {
         }
 
         public int nextInt() throws IOException {
-            if (!st.hasMoreTokens())
-                st = new StringTokenizer(r.readLine());
+            if (!st.hasMoreTokens()) st = new StringTokenizer(r.readLine());
             return Integer.parseInt(st.nextToken());
         }
 
         public char[] nextCharArr() throws IOException {
             return r.readLine().toCharArray();
+        }
+
+        public String readLine() throws IOException {
+            return r.readLine();
         }
     }
 
