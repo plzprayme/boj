@@ -3,63 +3,44 @@ package 토마토_7576;
 import java.io.*;
 import java.util.*;
 
-import javax.swing.text.Position;
-
 import org.junit.jupiter.api.Test;
 
 class Main {
 
-    static boolean already = true;
     static int X, Y;
     static int[][] map;
-    static boolean[][] visit;
-    static Stack<Position> stack = new Stack<>();
+
+    static Queue<Position> q = new LinkedList<>();
 
     static int[] dx = {0, 1, 0, -1};
     static int[] dy = {-1, 0, 1, 0};
 
     private static void solution() {
-        if (already) {
-            System.out.println(0);
-            return;
-        }
-
-        int count = -1;
-        while (!stack.isEmpty()) {
-
-            Position[] tomato = new Position[stack.size()];
-            for (int i = 0; i < tomato.length; i++) tomato[i] = stack.pop();
-            for (Position t : tomato) {
-                if (Objects.isNull(t)) break;
-                visit[t.y][t.x] = true;
-                bfs(t);
-            }
-            count++;
-        }
-
-        for (int[] row : map) {
-            for (int col : row) {
-                if (col == 0) {
-                    System.out.println(-1);
-                    return;
-                }
-            }
-        }
-
-        System.out.println(count);
+        System.out.println(bfs());
     }
 
+    private static int bfs() {
+        while (!q.isEmpty()) {
+            Position now = q.poll();
 
-    private static void bfs(Position now) {
-        for (int i = 0; i < 4; i++) {
-            int nx = now.x + dx[i];
-            int ny = now.y + dy[i];
-            if (isOut(nx, ny) || visit[ny][nx] || map[ny][nx] == -1) continue;
-            map[ny][nx] = 1;
-            visit[ny][nx] = true;
-            stack.add(new Position(nx, ny));
+            for (int i = 0; i < 4; i++) {
+                int nx = now.x + dx[i];
+                int ny = now.y + dy[i];
+                if (isOut(nx, ny) || map[ny][nx] != 0) continue;
+                map[ny][nx] = map[now.y][now.x] + 1;
+                q.add(new Position(nx,ny));
+            }
         }
 
+        int answer = Integer.MIN_VALUE;
+        for (int[] row: map) {
+            for (int col : row) {
+                if (col == 0) return -1;
+                answer = Math.max(answer, col);
+            }
+        }
+        if (answer == 1) return 0;
+        return answer - 1;
     }
 
     private static boolean isOut(int x, int y) {
@@ -72,15 +53,14 @@ class Main {
 
     private static void input() throws IOException {
         InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\토마토_7576\\input.txt");
-        X = r.nextInt(); Y = r.nextInt();
+        X = r.nextInt();
+        Y = r.nextInt();
         map = new int[Y][X];
-        visit = new boolean[Y][X];
 
         for (int y = 0; y < Y; y++) {
             for (int x = 0; x < X; x++) {
                 int num = r.nextInt();
-                if (already && num == 0) already = false;
-                if (num == 1) stack.add(new Position(x, y));
+                if (num == 1) q.add(new Position(x, y));
                 map[y][x] = num;
             }
         }
@@ -120,7 +100,8 @@ class Main {
         }
 
         public int nextInt() throws IOException {
-            if (!st.hasMoreTokens()) st = new StringTokenizer(r.readLine());
+            if (!st.hasMoreTokens())
+                st = new StringTokenizer(r.readLine());
             return Integer.parseInt(st.nextToken());
         }
 
@@ -128,6 +109,6 @@ class Main {
             return r.readLine().toCharArray();
         }
     }
-    
+
 }
 
