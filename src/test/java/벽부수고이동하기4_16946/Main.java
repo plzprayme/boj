@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 class Main {
     static int X, Y;
     static int[][] map;
-    static boolean[][] visit;
-    static Queue<Integer> visitedPosition = new LinkedList<>();
 
     static int groupKey = 1;
     static int[][] group;
+
+    static Map<Integer, Integer> groupMap = new HashMap<>();
 
     static int[][] dxy = {
         // x y
@@ -29,18 +29,12 @@ class Main {
             for (int x = 0; x < X; x++) {
 
                 // 벽 건너뛰기
-                if (map[y][x] == -1) continue;
+                if (group[y][x] > 0 || map[y][x] == -1) continue;
 
                 int count = dfs(x, y); // 벽 아닌데 연속된 공간 세어놓기
-
-                // 벽 아닌데 연속된 공간에 숫자 채워넣기
-                while (!visitedPosition.isEmpty()) {
-                    int _y = visitedPosition.poll();
-                    int _x = visitedPosition.poll();
-                    map[_y][_x] = count;
-                    group[_y][_x] = groupKey;
-                }
+                groupMap.put(groupKey, count);
                 groupKey++;
+
             }
         }
 
@@ -63,24 +57,22 @@ class Main {
         for (int[] xy : dxy) {
             int nx = x + xy[0];
             int ny = y + xy[1];
-            if (isOut(nx, ny) ||  map[ny][nx] == -1) continue;
-            if (g.contains(group[ny][nx])) continue;
+            if (isOut(nx, ny) || map[ny][nx] == -1 || g.contains(group[ny][nx])) continue;
             g.add(group[ny][nx]);
-            count += map[ny][nx];
+            count += groupMap.get(group[ny][nx]);
         }
         return count % 10;
     }
 
     private static int dfs(int x, int y) {
-        if (visit[y][x]) return 0;
-        visit[y][x] = true;
-        visitedPosition.add(y); visitedPosition.add(x);
+        if (group[y][x] > 0) return 0;
+        group[y][x] = groupKey;
 
         int count = 0;
         for (int[] xy : dxy) {
             int nx = x + xy[0];
             int ny = y + xy[1];
-            if (isOut(nx, ny) || visit[ny][nx] || map[ny][nx] == -1) continue;
+            if (isOut(nx, ny) || group[ny][nx] > 0 || map[ny][nx] == -1) continue;
             count += dfs(nx, ny);
         }
 
@@ -100,7 +92,6 @@ class Main {
         InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\벽부수고이동하기4_16946\\input.txt");
         Y = r.nextInt(); X = r.nextInt();
         map = new int[Y][X];
-        visit = new boolean[Y][X];
         group = new int[Y][X];
 
         for (int i = 0; i < Y; i++) {
