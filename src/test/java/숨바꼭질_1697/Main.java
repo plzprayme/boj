@@ -20,30 +20,38 @@ class Main {
     }
 
     private static void bfs(int start, int depth) {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(start); queue.add(depth);
+        Queue<State> queue = new LinkedList<>();
+        queue.add(new State(start, depth));
 
         while (!queue.isEmpty()) {
-            int cur = queue.poll();
-            int curDepth = queue.poll();
+            State state = queue.poll();
 
-            if (cur == K) answer = Math.min(answer, curDepth);
-            if (cur < 0 || cur > 200_000 || visit[cur] || curDepth >= answer) continue;
-            visit[cur] = true;
+            if (state.cur == K) answer = Math.min(answer, state.depth);
+            if (state.cur < 0 || state.cur > 200_000 || visit[state.cur] || state.depth >= answer) continue;
+            visit[state.cur] = true;
 
-            if (start < K) {
+            if (state.cur < K) {
 
-                if (start * 2  - K <= answer) {
-                    queue.add(cur * 2); queue.add(curDepth + 1);
+                if (state.cur * 2  - K <= answer) {
+                    queue.add(new State(state.cur * 2, state.depth + 1));
                 }
 
-                if (cur + 1 - K <= answer) {
-                    queue.add(cur + 1); queue.add(curDepth + 1);
+                if (state.cur + 1 - K <= answer) {
+                    queue.add(new State(state.cur + 1, state.depth + 1));
                 }
 
             }
 
-            queue.add(cur - 1); queue.add(curDepth + 1);
+            queue.add(new State(state.cur - 1, state.depth + 1));
+        }
+    }
+
+    private static class State {
+        int cur, depth;
+
+        public State(int cur, int depth) {
+            this.cur = cur;
+            this.depth = depth;
         }
     }
 
