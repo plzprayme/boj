@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 
 class Main {
 
-	static int vCount, eCount;
 	static boolean[] visit;
 	static List<Integer>[] tree;
+	static int vCount, eCount;
 
 	private static void solution() throws IOException {
 		InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\트리_4803\\input.txt");
+
+		StringBuilder sb = new StringBuilder();
 
 		for (int test = 1; ; test++) {
 			int E = r.nextInt();
@@ -36,36 +38,50 @@ class Main {
 			int count = 0;
 			for (int e = 1; e <= E; e++) {
 				if (visit[e]) continue;
-				count += dfs(e, 0);
+				// 정점 개수, 간선 개수 초기화
+				vCount = 0;
+				eCount = 0;
+
+				// 정점 개수, 간선 개수 세기
+				dfs(e);
+
+				// 양방향이니까 간선은 반으로 나눈다.
+				// 트리의 정질 V = E - 1 이용
+				if (vCount / 2 == eCount - 1) {
+					count++;
+				}
 			}
 
-			if (count == 0) {
-				System.out.printf("Case %d: No trees.\n", test);
+			// 정답 빌드
+			sb.append("Case ").append(test).append(": ");
+
+			if (count > 1) {
+				sb.append("A forest of ").append(count).append(" trees.");
 			} else if (count == 1) {
-				System.out.printf("Case %d: There is one tree.\n", test);
+				sb.append("There is one tree.");
 			} else {
-				System.out.printf("Case %d: A forest of %d trees.\n", test, count);
+				sb.append("No trees.");
 			}
+
+			sb.append('\n');
+
 		}
+		System.out.println(sb);
 
 	}
 
 	// 트리의 정의 : 간선 / 2 == 정점 - 1 이어야한다.
 	// 트리의 정의 : 정점 = 간선 - 1
-	private static int dfs(int cur, int pre) {
-		if (visit[cur])
-			return 0;
-
-		int result = 1;
+	// 정점 세기, 간선 세기
+	private static void dfs(int cur) {
+		eCount++;
+		vCount += tree[cur].size();
 		visit[cur] = true;
 
 		for (int next : tree[cur]) {
-			if (next == pre)
-				continue;
-			result = Math.min(dfs(next, cur), result);
+			if (visit[next]) continue;
+			dfs(next);
 		}
-
-		return result;
 	}
 
 	@Test
