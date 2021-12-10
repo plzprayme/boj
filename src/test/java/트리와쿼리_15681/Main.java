@@ -9,16 +9,31 @@ class Main {
 
 	static int N, R, Q;
 	static List<Integer>[] tree;
-	static int[] queries;
 	static int[] childTable;
 
-	private static void solution() {
+	static InputReader r;
+
+	private static void solution() throws IOException {
+		dfs2(0, R);
+
+		// 정답 만들기
 		StringBuilder sb = new StringBuilder();
-		dfs(0, R);
-		for (int q : queries) {
-			sb.append(childTable[q]).append('\n');
+		for (int i = 0; i < Q; i++) {
+			sb.append(childTable[r.nextInt()]).append('\n');
 		}
+		// for (int q : queries) {
+		// 	sb.append(childTable[q]).append('\n');
+		// }
 		System.out.println(sb);
+	}
+
+	private static void dfs2(int pre, int cur) {
+		childTable[cur] = 1; // 리프 노드는 1 저장 후 끝난다.
+		for (int next : tree[cur]) {
+			if (next == pre) continue;
+			dfs(cur, next); // 리프 노드까지 들어가기
+			childTable[cur] += childTable[next]; // next의 자식 노드 숫자 더하기
+		}
 	}
 
 	private static void dfs(int pre, int cur) {
@@ -39,7 +54,7 @@ class Main {
 	}
 
 	private static void input() throws IOException {
-		InputReader r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\트리와쿼리_15681\\input.txt");
+		r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\트리와쿼리_15681\\input.txt");
 		N = r.nextInt();
 		R = r.nextInt();
 		Q = r.nextInt();
@@ -55,12 +70,6 @@ class Main {
 			int right = r.nextInt();
 			tree[left].add(right);
 			tree[right].add(left);
-		}
-
-		queries = new int[Q];
-		for (int i = 0; i < Q; i++) {
-			int a = r.nextInt();
-			queries[i] = a;
 		}
 
 		childTable = new int[N + 1];
