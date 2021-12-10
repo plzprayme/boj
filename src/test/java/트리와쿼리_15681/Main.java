@@ -14,43 +14,23 @@ class Main {
 	static InputReader r;
 
 	private static void solution() throws IOException {
-		dfs2(0, R);
+		dfs(0, R);
 
 		// 정답 만들기
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < Q; i++) {
 			sb.append(childTable[r.nextInt()]).append('\n');
 		}
-		// for (int q : queries) {
-		// 	sb.append(childTable[q]).append('\n');
-		// }
 		System.out.println(sb);
 	}
 
-	private static void dfs2(int pre, int cur) {
+	private static void dfs(int pre, int cur) {
 		childTable[cur] = 1; // 리프 노드는 1 저장 후 끝난다.
 		for (int next : tree[cur]) {
 			if (next == pre) continue;
 			dfs(cur, next); // 리프 노드까지 들어가기
 			childTable[cur] += childTable[next]; // next의 자식 노드 숫자 더하기
 		}
-	}
-
-	private static void dfs(int pre, int cur) {
-		// 루트도 사이즈가 1일 수도 있다.
-		// 그래서 pre != 0 로 루트가 아닌 리프 노드만 거르기
-		if (pre != 0 && tree[cur].size() == 1) {
-			childTable[cur] = 1; // 리프 노드의 자식 노드 결정
-			return;
-		}
-
-		int childCount = 1;
-		for (int next : tree[cur]) {
-			if (next == pre) continue;
-			dfs(cur, next); // 리프 노드까지 들어가기
-			childCount += childTable[next]; // next의 자식 노드 숫자 더하기
-		}
-		childTable[cur] = childCount; // cur의 자식 노드 결정
 	}
 
 	private static void input() throws IOException {
