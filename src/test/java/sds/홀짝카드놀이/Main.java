@@ -7,11 +7,6 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static InputReader r;
-    static boolean[] selected = new boolean[10_001];
-    static int[] cards = new int[10_001];
-
-    static int N;
-    static int answer;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -54,45 +49,57 @@ class Main {
 
         StringBuilder sb = new StringBuilder();
         for (int t = 1; t <= T; t++) {
-            N = r.nextInt();
-            answer = Integer.MIN_VALUE;
+            int N = r.nextInt();
 
-            for (int i = 1; i <= N; i++) {
-                cards[i] = r.nextInt();
+
+            Deque<Integer> oddDeque = new ArrayDeque<>();
+            Deque<Integer> deque = new ArrayDeque<>();
+
+            int[] nums = new int[N];
+            for (int i = 0; i < N; i++) {
+                nums[i] = r.nextInt();
             }
-            combination(1, 0, 0);
-            // 방법 1. 완전탐색
-            // 반복 횟수는 cards.length / 2
-            // 반복할 때 봐야할 것들 selected, sum, n
-            sb.append('#').append(t).append(' ').append(answer).append('\n');
+
+            // 정렬
+            Arrays.sort(nums);
+            for (int i : nums) {
+                if (i % 2 == 0) deque.add(i);
+                else oddDeque.add(i);
+            }
+
+            int sum = 0;
+            // 두 덱의 원소가 짝수 개 일때
+            if (deque.size() % 2 == 0) {
+                while (!deque.isEmpty() || !oddDeque.isEmpty()) {
+                    if (!deque.isEmpty()) {
+                        sum += Math.max(deque.pollFirst(), deque.pollLast());
+                    }
+
+                    if (!oddDeque.isEmpty()) {
+                        sum += Math.max(oddDeque.pollFirst(), oddDeque.pollLast());
+                    }
+                }
+            } else {
+                // 두 덱의 원소가 홀수 일 때
+                while (deque.size() > 1) {
+                    int left = deque.pollLast();
+                    int right = deque.pollFirst();
+                    sum += Math.max(left, right);
+                }
+
+
+                while (oddDeque.size() > 1) {
+                    int left = oddDeque.pollLast();
+                    int right = oddDeque.pollFirst();
+                    sum += Math.max(left, right);
+                }
+
+                sum += Math.min(deque.poll(), oddDeque.poll());
+            }
+
+            sb.append('#').append(t).append(' ').append(sum).append('\n');
         }
         System.out.println(sb);
-    }
-
-    static void combination(int n, int pre, int sum) {
-        if (n == N + 1) {
-            answer = Math.max(answer , sum);
-        } else {
-            for (int i = 1; i <= N; i++) {
-                if (selected[i]) continue;
-                selected[i] = true;
-                combination(n + 1, cards[i], nextSum(n, pre, sum, i));
-                selected[i] = false;
-            }
-        }
-
-    }
-
-    private static int nextSum(int n, int pre, int sum, int i) {
-        if (n % 2 == 0) {
-            int tmp = pre + cards[i];
-            if (tmp % 2 == 0) {
-                return sum + Math.max(pre, cards[i]);
-            } else {
-                return sum + Math.min(pre, cards[i]);
-            }
-        }
-        return sum;
     }
 
     private static void input() throws IOException {
