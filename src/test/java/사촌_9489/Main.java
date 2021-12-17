@@ -7,107 +7,88 @@ import org.junit.jupiter.api.Test;
 
 class Main {
 
-    static List<Integer> nodeCountOfDepth = new ArrayList<>();
-    static Map<Integer, Set<Integer>> nodeMap = new HashMap<>();
+    static InputReader r;
 
-	static InputReader r;
+    static Map<Integer, Integer> nodeLevelCash = new HashMap<>();
+//    static Set<Node> nodeLevelCash = new HashSet<>();
+    static int[] nodeCount = new int[1_000];
+
+
 
     private static void solution() throws IOException {
+        // level 1: 1
+        // level 2: 3 4 5
+        // level 3: 89 / 15 / 30 31 32
+
+        // 해당 레벨의 노드 수를 알고 있는 배열
+        // 노드와 레벨을 저장하는 Set
+        // 레벨 별로 노드를 저장하는 로직
+        StringBuilder sb = new StringBuilder();
         while (true) {
             int N = r.nextInt();
-            int M = r.nextInt();
-            if (N == 0 && M == 0) break;
+            int K = r.nextInt();
 
-            // 노드 입력 받기
-            int[] nodes = new int[N];
-            for (int i = 0; i < N; i++) {
-                nodes[i] = r.nextInt();
+            if (N == 0 && K == 0) {
+                System.out.println(sb);
+                return;
             }
 
-            // 증가하는 수열 찾기
+            int currentLevel = 0;
+            int parentNodeCount = 1;
+            int pre = r.nextInt();
+            int childCount = 1;
+            nodeLevelCash.put(pre, currentLevel);
 
-            // 루트 노드 추가하기
-            nodeCountOfDepth.add(1);
-            Set<Integer> root = new HashSet<>();
-            root.add(nodes[0]);
-            nodeMap.put(0, root);
-
-
-            int depth = 0;
-            int parentCount = nodeMap.get(depth++).size();
-            int pointer = 1; // 검사 해야 하는 노드의 위치를 가리킨다.
-            int count = 0; // 해당 depth의 노드 개수를 세기
-            int pre = 0;   // 이전 노드 기억하고 있기
-            Set<Integer> nodeHashSet = new HashSet<>();
-            while (pointer < N) {
-                // 첫 시작일 때
-                if (pre == 0) {
-                    // pre를 등록해준다.
-                    pre = nodes[pointer++];
-                    // 카운트 1증가
-                    count++;
-                    nodeHashSet.add(pre);
+            for (int i = 1; i < N; i++) {
+                int cur = r.nextInt();
+                nodeLevelCash.put(cur, currentLevel);
+                if (pre + 1 == cur) {
+                    // 연속된 수열일 때
+                    childCount++;
                 } else {
-                    int cur = nodes[pointer++];
-                    if (pre + 1 != cur) {
-                        // 이전 노드가 지금 노드와 같지 않을 때
-                        // 현재 깊이의 노드 숫자를 추가하고
-                        // 카운트를 초기화해준다.
+                    // 연속 수열이 아닐 때
+                    parentNodeCount--;
+                    if (parentNodeCount == 0) {
+                        nodeCount[currentLevel] = childCount;
+                        parentNodeCount = nodeCount[currentLevel];
+                        currentLevel++;
 
-                        if (parentCount == 1) {
-                            nodeCountOfDepth.add(count);
-                            nodeMap.put(depth, nodeHashSet);
-                            nodeHashSet = new HashSet<>();
-                            count = 0;
-                            parentCount = nodeMap.get(depth).size();
-                            depth++;
-                        } else {
-                            nodeHashSet.add(pre);
-                            count++;
-                            parentCount--;
-                        }
-
-
+                        childCount = 1;
                     } else {
-                        nodeHashSet.add(pre);
-                        // 카운트 증가한다.
-                        count++;
-                    }
-                    // 지금 노드를 이전 노드로 교체해준다.
-                    pre = cur;
-                    if (pointer == N) {
-                        nodeHashSet.add(pre);
-                        count++;
+                        childCount++;
                     }
                 }
+
+                if (i == N - 1) {
+                    nodeCount[currentLevel] = childCount;
+                }
+
+                pre = cur;
             }
-            nodeCountOfDepth.add(count);
-            nodeMap.put(nodeCountOfDepth.size() - 1, nodeHashSet);
 
-            System.out.println("");
 
-            // for (int i = 1; i < N; i++) {
-            //     // 첫 시작일 때
-            //     if (pre == 0) {
-            //         pre = nodes[pointer++];
-            //         count++;
-            //     } else {
-            //         int cur = nodes[pointer++];
-            //         if (pre != cur) {
-            //             nodeCountOfDepth.add(count);
-            //             count = 0;
-            //         } else {
-            //             count++;
-            //         }
-            //         pre = cur;
-            //     }
-            // }
+            int level = nodeLevelCash.get(K);
+            sb.append(nodeCount[level] - 1).append('\n');
+        }
+    }
 
+    static class Node {
+        int n, v;
+
+        public Node(int n, int v) {
+            this.n = n;
+            this.v = v;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            Node node = (Node) o;
+            return n == node.n;
         }
     }
 
     private static void input() throws IOException {
-        r = new InputReader("C:\\Users\\prayme\\workspace\\boj\\src\\test\\java\\사촌_9489\\input.txt");
+        r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\사촌_9489\\input.txt");
     }
 
     @Test
