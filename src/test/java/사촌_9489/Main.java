@@ -10,110 +10,63 @@ class Main {
     static InputReader r;
 
     static int N, K;
-
-    static int kParent;
-
-    static int answer;
+    static int[] node, parent;
 
     static StringBuilder sb = new StringBuilder();
 
-    static int[] nodes;
-    static Map<Integer, List<Integer>> tree;
-
     private static void solution() throws IOException {
-        nodes = new int[N];
-        for (int i = 0; i < N; i++) nodes[i] = r.nextInt();
+        // 부모의 부모 의 자식 노드들 구한다. -> K의 부모의 사촌들
+        // K의 부모의 사촌들의 자식들을 구한다. -> K의 사촌들
 
-        tree = new HashMap<>();
+        // 예외. 부모의 부모가 없을 수도 있다. -> K가 루트의 자식
+        // 예외. 부모가 없을 수도 있다. -> K가 루트
 
-        Queue<Integer> parentQueue = new LinkedList<>();
-        parentQueue.add(nodes[0]);
+        // 부모를 저장하자.
+        parent[0] = -1; // 0은 존재하지 않는 노드이다..
+        parent[1] = 0; // 루트는 부모가 없다.
 
-        int nodeIndex = 1;
-        while (nodeIndex < N - 1) {
-            int parent = parentQueue.poll();
-
-            List<Integer> child = new ArrayList<>();
-            for (int i = nodeIndex; i < N - 1; i++) {
-                int cur = nodes[i];
-                int next = nodes[i + 1];
-
-                // 현재를 일단 parent에 붙인다.
-                child.add(cur);
-                parentQueue.add(cur);
-
-                if (cur == K) {
-                    kParent = parent;
-                }
-
-                // 마지막일 때
-                if (i == N - 2) {
-                    if (cur + 1 == next) {
-                        // 다음도 child에 포함일때
-                        child.add(next);
-                        tree.put(parent, child);
-                    } else {
-                        // child 포함 아닐 때
-                        // 지금까지를 저장하고
-                        tree.put(parent, child);
-
-                        // 다음꺼도 저장해준다.
-                        parent = parentQueue.poll();
-                        tree.put(parent, List.of(next));
-                    }
-
-                    /// 가장 마지막 노드가 K의 Parent인 경우..
-                    if (next == K) {
-                        kParent = parent;
-                    }
-                    nodeIndex = N;
+        // 부모를 구하자.
+        // last의 자식 노드를 구해야한다.
+        int last = 1;
+        for (int i = 2; i <= N; i++, last++) {
+            for (; i <= N; i++) {
+                parent[i] = last;
+                // i + 1이 가능하면서, cur과 next이 1 이상 차이날 때
+               if (i < N && node[i] + 1 != node[i + 1]) {
                     break;
-                }
-
-                if (cur + 1 != next) {
-                    tree.put(parent, child);
-                    nodeIndex = i + 1;
-                    break;
-                }
+               }
             }
         }
 
-        if (kParent == nodes[0] && nodes[0] == K) {
-            answer = 0;
-        } else {
-            dfs(nodes[0]);
+        // K의 인덱스 찾기.
+        // input에서 찾아도 되긴 함.
+        int kIdx = 0;
+        for (int i = 1; i <= N; i++) {
+            if (node[i] == K) kIdx = i;
         }
 
+        // 정답찾기
+        int answer = 0;
+        for (int i = 1; i <= N; i++) {
+            // 부모의 부모는 같으면서 부모는 다른 정점 찾기
+            if (parent[parent[i]] == parent[parent[kIdx]] && parent[i] != parent[kIdx]) {
+                answer++;
+            }
+        }
         sb.append(answer).append('\n');
     }
-
-    private static void dfs(int node) {
-        if (!tree.containsKey(node)) return;
-        List<Integer> child = tree.get(node);
-        if (Objects.isNull(child)) return;
-        if (child.contains(kParent)) {
-            int count = 0;
-            for (Integer childNode : child) {
-                if (childNode == kParent) continue;
-                count += tree.get(childNode).size();
-            }
-            answer = count;
-        } else {
-            for (Integer childNode : child) {
-                dfs(childNode);
-            }
-        }
-    }
-
     private static void input() throws IOException {
-        r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\사촌_9489\\input.txt");
+        N = r.nextInt(); K = r.nextInt();
+        parent = new int[N + 1];
+        node = new int[N + 1];
+        for (int i = 1; i <= N; i++) node[i] = r.nextInt();
     }
 
     @Test
     public static void main(String[] args) throws IOException {
-        input();
+        r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\사촌_9489\\input.txt");
         while (true) {
-            N = r.nextInt(); K = r.nextInt();
+            input();
             if (N == 0 && K == 0) break;
             solution();
         }
