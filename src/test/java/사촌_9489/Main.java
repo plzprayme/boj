@@ -9,81 +9,99 @@ class Main {
 
     static InputReader r;
 
-    static Map<Integer, Integer> nodeLevelCash = new HashMap<>();
-//    static Set<Node> nodeLevelCash = new HashSet<>();
-    static int[] nodeCount = new int[1_000];
+    static int N, K;
 
+    static int kParent;
 
+    static int answer;
+
+    static StringBuilder sb = new StringBuilder();
+
+    static int[] nodes;
+    static Map<Integer, List<Integer>> tree;
 
     private static void solution() throws IOException {
-        // level 1: 1
-        // level 2: 3 4 5
-        // level 3: 89 / 15 / 30 31 32
+        nodes = new int[N];
+        for (int i = 0; i < N; i++) nodes[i] = r.nextInt();
 
-        // 해당 레벨의 노드 수를 알고 있는 배열
-        // 노드와 레벨을 저장하는 Set
-        // 레벨 별로 노드를 저장하는 로직
-        StringBuilder sb = new StringBuilder();
-        while (true) {
-            int N = r.nextInt();
-            int K = r.nextInt();
+        tree = new HashMap<>();
 
-            if (N == 0 && K == 0) {
-                System.out.println(sb);
-                return;
-            }
+        Queue<Integer> parentQueue = new LinkedList<>();
+        parentQueue.add(nodes[0]);
 
-            int currentLevel = 0;
-            int parentNodeCount = 1;
-            int pre = r.nextInt();
-            int childCount = 1;
-            nodeLevelCash.put(pre, currentLevel);
+        int nodeIndex = 1;
+        while (nodeIndex < N - 1) {
+            int parent = parentQueue.poll();
 
-            for (int i = 1; i < N; i++) {
-                int cur = r.nextInt();
-                nodeLevelCash.put(cur, currentLevel);
-                if (pre + 1 == cur) {
-                    // 연속된 수열일 때
-                    childCount++;
-                } else {
-                    // 연속 수열이 아닐 때
-                    parentNodeCount--;
-                    if (parentNodeCount == 0) {
-                        nodeCount[currentLevel] = childCount;
-                        parentNodeCount = nodeCount[currentLevel];
-                        currentLevel++;
+            List<Integer> child = new ArrayList<>();
+            for (int i = nodeIndex; i < N - 1; i++) {
+                int cur = nodes[i];
+                int next = nodes[i + 1];
 
-                        childCount = 1;
+                // 현재를 일단 parent에 붙인다.
+                child.add(cur);
+                parentQueue.add(cur);
+
+                if (cur == K) {
+                    kParent = parent;
+                }
+
+                // 마지막일 때
+                if (i == N - 2) {
+                    if (cur + 1 == next) {
+                        // 다음도 child에 포함일때
+                        child.add(next);
+                        tree.put(parent, child);
                     } else {
-                        childCount++;
+                        // child 포함 아닐 때
+                        // 지금까지를 저장하고
+                        tree.put(parent, child);
+
+                        // 다음꺼도 저장해준다.
+                        parent = parentQueue.poll();
+                        tree.put(parent, List.of(next));
                     }
+
+                    /// 가장 마지막 노드가 K의 Parent인 경우..
+                    if (next == K) {
+                        kParent = parent;
+                    }
+                    nodeIndex = N;
+                    break;
                 }
 
-                if (i == N - 1) {
-                    nodeCount[currentLevel] = childCount;
+                if (cur + 1 != next) {
+                    tree.put(parent, child);
+                    nodeIndex = i + 1;
+                    break;
                 }
-
-                pre = cur;
             }
-
-
-            int level = nodeLevelCash.get(K);
-            sb.append(nodeCount[level] - 1).append('\n');
         }
+
+        if (kParent == nodes[0] && nodes[0] == K) {
+            answer = 0;
+        } else {
+            dfs(nodes[0]);
+        }
+
+        sb.append(answer).append('\n');
     }
 
-    static class Node {
-        int n, v;
-
-        public Node(int n, int v) {
-            this.n = n;
-            this.v = v;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            Node node = (Node) o;
-            return n == node.n;
+    private static void dfs(int node) {
+        if (!tree.containsKey(node)) return;
+        List<Integer> child = tree.get(node);
+        if (Objects.isNull(child)) return;
+        if (child.contains(kParent)) {
+            int count = 0;
+            for (Integer childNode : child) {
+                if (childNode == kParent) continue;
+                count += tree.get(childNode).size();
+            }
+            answer = count;
+        } else {
+            for (Integer childNode : child) {
+                dfs(childNode);
+            }
         }
     }
 
@@ -94,7 +112,12 @@ class Main {
     @Test
     public static void main(String[] args) throws IOException {
         input();
-        solution();
+        while (true) {
+            N = r.nextInt(); K = r.nextInt();
+            if (N == 0 && K == 0) break;
+            solution();
+        }
+        System.out.println(sb);
     }
 
     private static class InputReader {
