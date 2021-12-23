@@ -14,8 +14,7 @@ class Main {
     static List<Integer>[] in;
     static List<Integer>[] out;
 
-    static boolean[] canBuild;
-
+    static int[] indegree;
     static int N, M, K;
 
     @Test
@@ -25,9 +24,10 @@ class Main {
     }
 
     private static void solution() throws IOException {
-        for (int i = 1; i <= N; i++) {
-            if (in[i].isEmpty()) canBuild[i] = true;
-        }
+
+        // indegree 유지
+        // currentIndegree 유지
+        int[] currentIndegree = new int[N + 1];
 
         for (int k = 0; k < K; k++) {
             int behavior = r.nextInt();
@@ -35,9 +35,16 @@ class Main {
 
             if (behavior == 1) {
                 // 건설 가능한지 체크하자
-                if (canBuild[node]) {
+                if (currentIndegree[node] == indegree[node]) {
                     // 건설하자
                     build[node]++;
+
+                    // 건설 한 후에 윗 단계 건물들의 indegree 하나씩 추가해줌
+                    if (build[node] == 1) {
+                        for (int next : out[node]) {
+                            currentIndegree[next]++;
+                        }
+                    }
 
                 } else {
                     System.out.println("Lier!");
@@ -50,8 +57,12 @@ class Main {
                     System.out.println("Lier!");
                     return;
                 } else {
-                    for (int next : in[node]) {
-                        if (--build[next] == 0) canBuild[next] = true;
+                    --build[node];
+
+                    if (build[node] == 0) {
+                        for (int pre : out[node]) {
+                            currentIndegree[pre]--;
+                        }
                     }
                 }
             }
@@ -65,10 +76,10 @@ class Main {
 
         N = r.nextInt(); M = r.nextInt(); K = r.nextInt();
 
-        canBuild = new boolean[N + 1];
         build = new int[N + 1];
         in = new List[N + 1];
         out = new List[N + 1];
+        indegree = new int[N + 1];
         for (int i = 1; i <= N; i++) {
             in[i] = new ArrayList<>();
             out[i] = new ArrayList<>();
@@ -79,7 +90,7 @@ class Main {
             int right = r.nextInt();
             in[right].add(left);
             out[left].add(right);
-            build[right]++;
+            indegree[right]++;
         }
     }
 
