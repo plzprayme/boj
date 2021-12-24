@@ -12,12 +12,11 @@ class Main {
     static int T, N, K, W;
     static int[] time;
 
+    static int[] indegree;
+
     static List<Integer>[] out;
 
-    static boolean[] visit;
-
-    static int[] step;
-    static int answer = 0;
+    static StringBuilder sb = new StringBuilder();
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -27,37 +26,44 @@ class Main {
             input();
             solution();
         }
+        System.out.println(sb);
     }
 
     private static void solution() {
         // TODO
         // 건물 짓는 순서가 정해져있지 않다.
 
+        int[] currentTime = new int[N + 1];
         Queue<State> queue = new LinkedList<>();
-        queue.add(new State(W, 1));
-        visit[W] = true;
+        for (int i = 1; i <= N; i++) {
+            if (indegree[i] == 0) queue.add(new State(i, time[i]));
+        }
 
         while (!queue.isEmpty()) {
             State now = queue.poll();
-            step[now.s] = Math.max(step[now.s], step[now.s - 1] + time[now.n]);
 
-            for (int pre : out[now.n]) {
-                if (visit[pre]) continue;
-                visit[pre] = true;
-                queue.add(new State(pre, now.s + 1));
+            if (now.n == W) {
+                sb.append(now.t).append('\n');
+                return;
             }
 
-            answer = now.s;
+            for (int next : out[now.n]) {
+                currentTime[next] = Math.max(currentTime[next], now.t + time[next]);
+                if (--indegree[next] == 0) {
+                    queue.add(new State(next, currentTime[next]));
+                }
+            }
+
         }
-        System.out.println(step[answer]);
+
     }
 
     private static class State {
-        int n, s;
+        int n, t;
 
-        public State(int n, int s) {
+        public State(int n, int t) {
             this.n = n;
-            this.s = s;
+            this.t = t;
         }
     }
 
@@ -69,17 +75,17 @@ class Main {
 
         out = new List[N + 1];
         for (int i = 1; i <= N; i++) out[i] = new ArrayList<>();
+
+        indegree = new int[N + 1];
+
         for (int i = 0; i < K; i++) {
             int left = r.nextInt();
             int right = r.nextInt();
-            out[right].add(left);
+            out[left].add(right);
+            indegree[right]++;
         }
 
         W = r.nextInt();
-
-        step = new int[N + 1];
-
-        visit = new boolean[N + 1];
     }
 
     private static class InputReader {
