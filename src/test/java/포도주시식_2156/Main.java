@@ -42,8 +42,8 @@ class Main {
         // dp[i][0] = Math.max(Math.max(dp[0][0], dp[0][1]), dp[0][2])
         // dp[i][1] = dp[i-1][0] + drink[i]
         // dp[i][2] = dp[i-1][1] + drink[i]
-
-        int[][] dp = new int[N + 1][N + 1];
+        
+        int[][] dp = new int[N + 1][3];
         dp[1][1] = drink[1];
 
         for (int i = 2; i <= N; i++) {
