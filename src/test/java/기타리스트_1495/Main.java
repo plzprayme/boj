@@ -17,11 +17,10 @@ class Main {
         solution();
     }
 
-    private static void solution() {
+    private static void solution() throws IOException {
         // 필요한 정보
         // 1. i 번째 곡에서 연주 가능한 볼륨의 경우의 수
         // 2. 중복해서 계산하지 않도록 하기
-
         for (int i = 0; i < N; i++) {
 
             if (dp[i].isEmpty()) {
