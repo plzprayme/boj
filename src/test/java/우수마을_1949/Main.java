@@ -13,8 +13,6 @@ class Main {
 
     static int[][] dp;
 
-    static int ans = 0;
-
     @Test
     public static void main(String[] args) throws IOException {
         input();
@@ -22,40 +20,20 @@ class Main {
     }
 
     private static void solution() {
-        // 무방향 트리 구조를 가진 N 개의 마을이 있다.
-        // 우수 마을을 선정해보자.
 
-        // 우수 마을로 선정된 마을 주민 수의 총 합을 최대로 해야 한다.
-        // 인전합 두 마을은 우수 마을로 선정될 수 없다.
-        // 우수마을로 선정되지 못한 마을은 적어도 하나의 우수마을과 인접해야 한다.
+        dfs(0, 1);
 
-        // 초기식
-        // 루트를 1로 고정
-        dp[1][0] = population[1];
-
-        for (int next : graph[1]) dfs(1, next);
-        // 점화식
-        // 0 == 우수 마을
-        // 1 == 우수 X
-        // 2 == 2연속 우수 X (리프 노드는 2연속 우수 X 안된다.)
-
-
-        System.out.println(ans);
+        System.out.println(Math.max(dp[1][0], dp[1][1]));
     }
 
     private static void dfs(int prev, int cur) {
-        dp[cur][0] = Math.max(dp[prev][1], dp[prev][2]) + population[cur];
-        dp[cur][1] = dp[prev][0];
-        dp[cur][2] = dp[prev][1];
-
-        if (graph[cur].size() == 1) {
-            ans += Math.max(dp[cur][0], dp[cur][1]);
-            return;
-        }
+        dp[cur][1] = population[cur];
 
         for (int next : graph[cur]) {
             if (prev == next) continue;
             dfs(cur, next);
+            dp[cur][0] += Math.max(dp[next][0], dp[next][1]);
+            dp[cur][1] += dp[next][0];
         }
     }
 
