@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 class Main {
 
+    static int MAX = Integer.MIN_VALUE, MIN = Integer.MAX_VALUE;
+
     @Test
     public static void main(String[] args) throws IOException {
         input();
@@ -33,34 +35,41 @@ class Main {
         // 4. 2자리 숫자 처리 로직
         // 5. 한자리면 종료
         InputReader r = new InputReader();
-        recursion(r.nextLine());
+        recursion(0, r.nextLine());
+        System.out.printf("%d %d", MIN, MAX);
     }
 
-    private static void recursion(String num) {
+    private static void recursion(int count, String num) {
         // 홀 수 카운팅
+        for (int i = 0; i < num.length(); i++) {
+            if (num.charAt(i) % 2 == 1) count++;
+        }
 
         if (num.length() == 1) {
-
             // 최댓값, 최솟값 갱신
+            MAX = Math.max(MAX, count);
+            MIN = Math.min(MIN, count);
         } else if (num.length() == 2) {
-
-            // 각 자리 더한 후 다음으로
+            // 첫째 둘째 더한 후 다음으로
+            String nextNumber = String.valueOf(num.charAt(0) + num.charAt(1) - '0' - '0') ;
+            recursion(count, nextNumber);
         } else {
             // 3개로 자르는 경우의 수
             for (int i = 0; i < num.length() - 2; i++) {
                 for (int j = i + 1; j < num.length() - 1; j++) {
                     for (int k = j + 1; k < num.length(); k++) {
-                        String next = newString(i, j, k, num);
-                        System.out.println(next);
+                        // 다음 숫자 구하기
+                        String next = nextNumber(i, j, k, num);
+                        recursion(count, next);
                     }
                 }
             }
 
-            // 각 자리 더한 후 다음으로
         }
+
     }
 
-    private static String newString(int S, int M, int E, String old) {
+    private static String nextNumber(int S, int M, int E, String old) {
         int newInt = 0;
         newInt += Integer.parseInt(old.substring(0, M));
         newInt += Integer.parseInt(old.substring(M, E));
@@ -102,7 +111,5 @@ class Main {
             return r.readLine();
         }
     }
-
-
 }
 
