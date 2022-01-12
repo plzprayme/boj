@@ -18,6 +18,8 @@ class Main {
 
     static int score = 0;
 
+    static Queue<int[]> queue = new LinkedList<>();
+
     @Test
     public static void main(String[] args) throws IOException {
         input();
@@ -30,12 +32,13 @@ class Main {
         // N * M 2차원 격자 게임판에 도미노를 세운다.
         // 도미노는 1이상 5 이하의 높이
         // 도미노를 동서남북 중 원하는 방향으로 넘어뜨린다.
+
+
         for (int i = 0; i < R; i++) {
             int y = r.nextInt();
             int x = r.nextInt();
             int d = getDirection(r.nextChar());
             dfs(x, y, d, map[y][x]);
-
             visited[r.nextInt()][r.nextInt()] = false;
         }
 
@@ -57,24 +60,27 @@ class Main {
         visited[y][x] = true;
         score++;
 
-        for (int i = 1; i <= h; i++) {
+        for (int i = 1; i < h; i++) {
             int nx = x + i * dx[d];
             int ny = y + i * dy[d];
             if (nx < 0 || nx > M || ny < 0 || ny > N) continue;
             if (visited[ny][nx]) continue;
-            score++;
-            visited[ny][nx] = true;
             dfs(nx, ny, d, map[ny][nx]);
         }
     }
 
     private static int getDirection(char d) {
         switch (d) {
-            case 'N': return 0;
-            case 'E': return 1;
-            case 'S': return 2;
-            case 'W': return 3;
-            default: return -1;
+            case 'N':
+                return 0;
+            case 'E':
+                return 1;
+            case 'S':
+                return 2;
+            case 'W':
+                return 3;
+            default:
+                return -1;
         }
     }
 
