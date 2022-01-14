@@ -11,14 +11,12 @@ class Main {
 
     static int N, M, R;
     static int[][] map;
-    static boolean[][] visited;
+    static int[][] clone;
 
     static int[] dx = {0, 1, 0, -1};
     static int[] dy = {-1, 0, 1, 0};
 
     static int score = 0;
-
-    static Queue<int[]> queue = new LinkedList<>();
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -33,41 +31,47 @@ class Main {
         // 도미노는 1이상 5 이하의 높이
         // 도미노를 동서남북 중 원하는 방향으로 넘어뜨린다.
 
-
         for (int i = 0; i < R; i++) {
-            int y = r.nextInt();
-            int x = r.nextInt();
-            int d = getDirection(r.nextChar());
-            dfs(x, y, d, map[y][x]);
-            visited[r.nextInt()][r.nextInt()] = false;
+            attackDomino(r.nextInt(), r.nextInt(), getDirection(r.nextChar()));
+            healDomino(r.nextInt(), r.nextInt());
         }
 
+        System.out.println(getAnswer());
+    }
+
+    private static StringBuilder getAnswer() {
         StringBuilder sb = new StringBuilder();
         sb.append(score).append('\n');
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
-                if (visited[i][j]) sb.append('F');
+                if (clone[i][j] == 0) sb.append('F');
                 else sb.append('S');
                 sb.append(' ');
             }
             sb.append('\n');
         }
-        System.out.println(sb);
+        return sb;
     }
 
-    private static void dfs(int x, int y, int d, int h) {
-        if (visited[y][x]) return;
-        visited[y][x] = true;
-        score++;
-
-        for (int i = 1; i < h; i++) {
-            int nx = x + i * dx[d];
-            int ny = y + i * dy[d];
+    private static void attackDomino(int y, int x, int d) {
+        int nx = x;
+        int ny = y;
+        for (int h = clone[y][x]; h > 0; h--) {
             if (nx < 0 || nx > M || ny < 0 || ny > N) continue;
-            if (visited[ny][nx]) continue;
-            dfs(nx, ny, d, map[ny][nx]);
+            h = Math.max(h, clone[ny][nx]);
+            if (clone[ny][nx] > 0) {
+                score++;
+                clone[ny][nx] = 0;
+            }
+            nx += dx[d];
+            ny += dy[d];
         }
     }
+
+    private static void healDomino(int y, int x) {
+        clone[y][x] = map[y][x];
+    }
+
 
     private static int getDirection(char d) {
         switch (d) {
@@ -90,11 +94,12 @@ class Main {
         M = r.nextInt();
         R = r.nextInt();
 
-        visited = new boolean[N + 1][M + 1];
+        clone = new int[N + 1][M + 1];
         map = new int[N + 1][M + 1];
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
                 map[i][j] = r.nextInt();
+                clone[i][j] = map[i][j];
             }
         }
     }
