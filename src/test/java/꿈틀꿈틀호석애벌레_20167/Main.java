@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N, K;
-    static int[] num = new int[100_001];
-    static int[][] dp = new int[100_001][3];
-    static long[] answer = new long[100_001];
+    static int[] num;
+    static List<State>[] dp;
+    static int[] answer;
 
     static long ans = 0;
 
@@ -20,9 +20,43 @@ class Main {
         solution();
     }
 
+
+    private static class State {
+        int l, v;
+
+        public State(int l, int v) {
+            this.l = l;
+            this.v = v;
+        }
+    }
+
     private static void solution() {
-        dfs(1, 0, 0);
-        System.out.println(ans);
+        // 100_001 * 10_000_001
+
+        // 투 포인터
+        int sum = 0;
+        int right = 1;
+        for (int left = 1; left <= N; left++) {
+            while (sum < K && right <= N) {
+                sum += num[right];
+                right++;
+            }
+
+            if (sum - K >= 0) {
+                dp[right - 1].add(new State(left, sum - K));
+                sum -= num[left];
+            }
+        }
+
+        for (int curRight = 1; curRight <= N; curRight++) {
+
+            for (State now : dp[curRight]) {
+                answer[curRight] = Math.max(answer[curRight - 1], answer[now.l - 1] + now.v);
+            }
+
+        }
+
+        System.out.println(answer[N]);
     }
 
     private static void dfs(int cur, int sum, int satis) {
@@ -46,8 +80,12 @@ class Main {
         // 최소 만족도 K
         N = r.nextInt(); K = r.nextInt();
 
+        dp = new List[N + 1];
+        num = new int[N + 1];
+        answer = new int[N + 1];
         for (int i = 1; i <= N; i++) {
             num[i] = r.nextInt();
+            dp[i] = new ArrayList<>();
         }
     }
 
