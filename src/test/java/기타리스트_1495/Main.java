@@ -49,10 +49,6 @@ class Main {
 
     }
 
-    private static void rec(int N) {
-
-    }
-
     private static void input() throws IOException {
         InputReader r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\기타리스트_1495\\input.txt");
         N = r.nextInt();
