@@ -8,65 +8,81 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N, M;
-    static SortedMap<Integer, Integer> counter;
+    static List<Student> list;
 
     static int[] num;
-    static int[] age;
 
     @Test
     public static void main(String[] args) throws IOException {
         input();
-        solution();
+        for (int i : num) {
+            solution(i);
+        }
+        printAnswer();
     }
 
-    private static void solution() {
-        // 추천하기 전 사진틀 비어있다.
-        // 추천 받은 학생의 사진이 사진틀에 게시
-
-
-        for (int i : num) {
-            if (counter.containsKey(i)) {
-                counter.put(i, counter.getOrDefault(i, 0) + 1);
-            } else {
-                if (counter.size() == N) {
-
-                    int maxKey = 0;
-                    int minValue = Integer.MAX_VALUE;
-                    int maxAge = -1;
-                    for (var entry : counter.entrySet()) {
-                        if (minValue >= entry.getValue() && maxAge < age[entry.getKey()]) {
-                            maxKey = entry.getKey();
-                            minValue = entry.getValue();
-                            maxAge = age[entry.getKey()];
-                        }
-                    }
-
-                    counter.remove(maxKey);
-                    counter.put(i, 1);
-                    age[maxKey] = 0;
-                } else {
-                    counter.put(i, counter.getOrDefault(i, 0) + 1);
-                }
-            }
-        }
-
-        for (var key : counter.keySet()) {
-            age[key]++;
-        }
-
+    private static void printAnswer() {
+        list.sort(Comparator.comparingInt(Student::getIdx));
 
         StringBuilder sb = new StringBuilder();
-        int[] answer = new int[N];
-        int count = 0;
-        for (int i : counter.keySet()) {
-            answer[count++] = i;
-        }
-        Arrays.sort(answer);
-        for (int i : answer) {
-            sb.append(i).append(' ');
+        for (Student s : list) {
+            sb.append(s.idx).append(' ');
         }
         System.out.println(sb);
+    }
 
+    private static void solution(int n) {
+        if (list.contains(new Student(n))) {
+
+            for (Student s : list) {
+                if (s.idx == n) {
+                    s.cnt++;
+                }
+            }
+        } else {
+            if (list.size() == N) {
+                list.remove(0);
+            }
+            list.add(new Student(n));
+        }
+
+        for (Student s : list) {
+            s.age++;
+        }
+
+        Collections.sort(list);
+    }
+
+    private static class Student implements Comparable<Student> {
+        int idx;
+        int cnt;
+        int age;
+
+        public Integer getIdx() {
+            return idx;
+        }
+
+        public Student(int idx) {
+            this(idx, 1, 1);
+        }
+
+        public Student(int idx, int cnt, int age) {
+            this.idx = idx;
+            this.cnt = cnt;
+            this.age = age;
+        }
+
+        @Override
+        public int compareTo(Student o) {
+            int c1 = Integer.compare(cnt, o.cnt);
+            if (c1 == 0) return Integer.compare(o.age, age);
+            return c1;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return idx == ((Student) o).idx;
+        }
     }
 
     private static void input() throws IOException {
@@ -74,14 +90,12 @@ class Main {
         N = r.nextInt();
         M = r.nextInt();
 
-        counter = new TreeMap<>();
+        list = new ArrayList<>();
 
         num = new int[M];
         for (int i = 0; i < M; i++) {
             num[i] = r.nextInt();
         }
-
-        age = new int[101];
     }
 
     private static class InputReader {
@@ -110,7 +124,6 @@ class Main {
             return r.readLine().toCharArray();
         }
     }
-
 
 }
 
