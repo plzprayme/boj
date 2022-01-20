@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static InputReader r;
-    static Stack<Integer> stack = new Stack<>();
 
     static int N;
     static String[] operations = new String[100_000];
@@ -44,6 +43,7 @@ class Main {
         int first;
         int second;
         int result;
+        int count;
 
         BigInteger bigFirst;
         BigInteger bigSecond;
@@ -127,7 +127,12 @@ class Main {
 
                     first = stack.pop();
                     second = stack.pop();
-                    stack.add(second - first);
+                    result = second - first;
+                    if (result < -LIMIT) {
+                        sb.append(ERROR);
+                        return;
+                    }
+                    stack.add(result);
                     break;
                 }
 
@@ -163,11 +168,15 @@ class Main {
                         return;
                     }
 
-                    if (second < 0 && first > 0 || second > 0 && first < 0) {
-                        result = Math.abs(second) / first;
+                    count = 0;
+                    if (second < 0) count++;
+                    if (first < 0) count++;
+                    result = Math.abs(second) / Math.abs(first);
+
+                    if (count == 1) {
                         stack.add(-result);
                     } else {
-                        stack.add(Math.abs(second) / Math.abs(first));
+                        stack.add(result);
                     }
                     break;
                 }
@@ -186,11 +195,11 @@ class Main {
                         return;
                     }
 
-                    if (second < 0 && first > 0) {
-                        result = Math.abs(second) % first;
+                    result = Math.abs(second) % Math.abs(first);
+                    if (second < 0) {
                         stack.add(-result);
                     } else {
-                        stack.add(Math.abs(second) % Math.abs(first));
+                        stack.add(result);
                     }
                     break;
                 }
