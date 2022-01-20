@@ -21,6 +21,9 @@ class Main {
 
     @Test
     public static void main(String[] args) throws IOException {
+        System.out.println(-13 % -4);
+        System.out.println(-13 % 4);
+        System.out.println();
         r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\고스택_3425\\input.txt");
 
         while (readOperation()) {
