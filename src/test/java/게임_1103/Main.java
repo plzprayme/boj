@@ -30,7 +30,7 @@ class Main {
 
     private static int bfs() {
         Stack<XY> stack = new Stack<>();
-        stack.push(new XY(1, 1, 1));
+        stack.add(new XY(1, 1, 0));
 
         while (!stack.isEmpty()) {
             XY now = stack.pop();
@@ -39,12 +39,19 @@ class Main {
             for (int d = 0; d < 4; d++) {
                 int nx = now.x + dx[d] * map[now.y][now.x];
                 int ny = now.y + dy[d] * map[now.y][now.x];
+                int ns = now.s + 1;
 
-                if (nx < 1 || nx > M || ny < 1 || ny > N) continue;
-                if (map[ny][nx] == 0) continue;
+                if (nx < 1 || nx > M || ny < 1 || ny > N) {
+                    dist[now.y][now.x] = ns;
+                    continue;
+                }
                 if (map[now.y][now.x] == map[ny][nx]) return -1;
-                if (dist[ny][nx] >= now.s + 1) continue;
-                stack.add(new XY(nx, ny, now.s + 1));
+                if (dist[ny][nx] >= ns) continue;
+                if (map[ny][nx] == 0) {
+                    dist[ny][nx] = ns;
+                    continue;
+                }
+                stack.add(new XY(nx,ny, ns));
             }
 
         }
