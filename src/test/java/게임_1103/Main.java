@@ -13,6 +13,9 @@ class Main {
     static int N, M;
     static int[][] map;
     static int[][] dist;
+    static boolean[][] visit;
+
+    static boolean cycle;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -21,58 +24,55 @@ class Main {
     }
 
     private static void solution() {
-        // 동전이 있는 곳에 쓰여 있는 숫자 X를 본다.
-        // 위, 아래, 왼쪽, 오른쪽 방향 중에 한 가지를 고른다.
-        // 동전을 위에서 고른 방향으로 X만큼 움직인다. 이때, 중간에 있는 구멍은 무시한다.
+        // 내가 착각한 점: 현재의 숫자와 다음의 숫자가 같을 때만 싸이클이 생길 것으로 예상
+        // 무한번 움직이는 것은 싸이클이 있는 그래프를 의미한다.
 
-        System.out.println(bfs());
+        // 무한루프 케이스
+
+        // 3 4
+        // 3 H H 2
+        // H H H H
+        // 2 H H 3
+
+        visit[1][1] = true;
+        dfs(1, 1, 1);
+
+        if (cycle) {
+            System.out.println(-1);
+        } else {
+            int answer = 0;
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= M; j++) {
+                    answer = Math.max(dist[i][j], answer);
+                }
+            }
+            System.out.println(answer);
+        }
     }
 
-    private static int bfs() {
-        Stack<XY> stack = new Stack<>();
-        stack.add(new XY(1, 1, 0));
+    private static void dfs(int x, int y, int step) {
+        // DFS 내부에서 VISIT을 조작하지 말자.
+        // DFS 내부에서는 함수를 종료하는 조건이 너무 많다.
+        if (cycle) return;
+        dist[y][x] = step;
 
-        while (!stack.isEmpty()) {
-            XY now = stack.pop();
-            dist[now.y][now.x] = now.s;
+        for (int d = 0; d < 4; d++) {
+            int nx = x + dx[d] * map[y][x];
+            int ny = y + dy[d] * map[y][x];
+            int ns = step + 1;
 
-            for (int d = 0; d < 4; d++) {
-                int nx = now.x + dx[d] * map[now.y][now.x];
-                int ny = now.y + dy[d] * map[now.y][now.x];
-                int ns = now.s + 1;
-
-                if (nx < 1 || nx > M || ny < 1 || ny > N) {
-                    dist[now.y][now.x] = ns;
-                    continue;
-                }
-                if (map[now.y][now.x] == map[ny][nx]) return -1;
-                if (dist[ny][nx] >= ns) continue;
-                if (map[ny][nx] == 0) {
-                    dist[ny][nx] = ns;
-                    continue;
-                }
-                stack.add(new XY(nx,ny, ns));
+            if (nx < 1 || nx > M || ny < 1 || ny > N) continue;
+            if (visit[ny][nx]) {
+                cycle = true;
+                return;
             }
-
+            if (dist[ny][nx] >= ns) continue;
+            if (map[ny][nx] == 0) continue;
+            visit[ny][nx] = true;
+            dfs(nx, ny, ns);
+            visit[ny][nx] = false;
         }
 
-        int answer = 0;
-        for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= M; j++) {
-                answer = Math.max(dist[i][j], answer);
-            }
-        }
-        return answer;
-    }
-
-    static class XY {
-        int x, y, s;
-
-        public XY(int x, int y, int s) {
-            this.x = x;
-            this.y = y;
-            this.s = s;
-        }
     }
 
     private static void input() throws IOException {
@@ -92,6 +92,7 @@ class Main {
         }
 
         dist = new int[N + 1][M + 1];
+        visit = new boolean[N + 1][M + 1];
     }
 
     private static class InputReader {
