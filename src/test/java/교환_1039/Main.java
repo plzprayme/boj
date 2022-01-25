@@ -9,12 +9,10 @@ class Main {
 
     static int N, M;
     static String K;
-//    static char[] K;
 
     static int answer = -1;
 
-    static Set<String> oddDp = new HashSet<>();
-    static Set<String> evenDp = new HashSet<>();
+    static Set<String>[] dp;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -39,22 +37,12 @@ class Main {
         if (M == m) {
             answer = Math.max(Integer.parseInt(k), answer);
         } else {
-            boolean isOdd = m % 2 == 1;
             for (int i = 0; i < K.length(); i++) {
                 for (int j = i + 1; j < K.length(); j++) {
                     String next = swap(k, i, j);
                     if (next.charAt(0) == '0') continue;
-                    if (isOdd) {
-                        if (oddDp.contains(next)) {
-                            continue;
-                        }
-                        oddDp.add(next);
-                    } else {
-                        if (evenDp.contains(next)) {
-                            continue;
-                        }
-                        evenDp.add(next);
-                    }
+                    if (dp[m].contains(next)) continue;
+                    dp[m].add(next);
                     backtracking(m + 1, next);
                 }
             }
@@ -73,7 +61,11 @@ class Main {
         InputReader r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\교환_1039\\input.txt");
         N = r.nextInt(); M = r.nextInt();
         K = String.valueOf(N);
-//        K = String.valueOf(N).toCharArray();
+
+        dp = new Set[M];
+        for (int i = 0; i < M; i++) {
+            dp[i] = new HashSet<>();
+        }
     }
 
     private static class InputReader {
