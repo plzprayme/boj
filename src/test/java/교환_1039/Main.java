@@ -25,15 +25,15 @@ class Main {
         // i < j 이다.
 
         // 7 자리의 모든 숫자를 바꿔본다면? 완전탐색의 시간 복잡도는?
-        // O(M-1! * K) = O(6! * K) = O(6 * 5 * 4 * 3 * 2 * 10) = 7200 가능.
+        // O(M-1! ^ K) = O(6! ^ K) = O(6 * 5 * 4 * 3 * 2 ^ 10) = 불가능.
 
-        // 캐싱을 통해 메모리를 적게 써보자
+        // 1_111_111
 
-        backtracking(0, K);
+        dfs(0, K);
         System.out.println(answer);
     }
 
-    private static void backtracking(int m, String k) {
+    private static void dfs(int m, String k) {
         if (M == m) {
             answer = Math.max(Integer.parseInt(k), answer);
         } else {
@@ -43,7 +43,7 @@ class Main {
                     if (next.charAt(0) == '0') continue;
                     if (dp[m].contains(next)) continue;
                     dp[m].add(next);
-                    backtracking(m + 1, next);
+                    dfs(m + 1, next);
                 }
             }
         }
