@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N;
-    static Integer[] nums;
+    static int[] nums;
+    static int[] sorted;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -53,10 +54,9 @@ class Main {
         for (int i = 1; i <= N; i++) {
             // 정렬
             mergeSort(1, i);
-            Arrays.sort(nums, 1, i);
 
             // 이분탐색
-            int idx = Arrays.binarySearch(nums, 1, i + 1, nums[i]);
+            int idx = Arrays.binarySearch(sorted, 1, i + 1, sorted[i]);
 
             sb.append(idx).append('\n');
         }
@@ -66,21 +66,44 @@ class Main {
 
     static void mergeSort(int left, int right) {
         // right - left == 1
-        if (right - left == 1) {
-            swap(left, right);
-            return;
-        }
+        if (right == left) return;
 
-        // right - left == 0 return
-        if (right - left == 0) return;
+        int mid = (left + right) / 2;
+        mergeSort(left, mid);
+        mergeSort(mid + 1, right);
 
-
+        merge(left, mid, right);
     }
 
-    static void swap(int left, int right) {
-        int tmp = nums[left];
-        nums[left] = nums[right];
-        nums[right] = tmp;
+    static void merge(int left, int mid, int right) {
+        int l = left;
+        int r = mid + 1;
+        int idx = left;
+
+        while (l <= mid && r <= right) {
+            // r이 크면 r을 넣는다.
+            if (nums[l] <= nums[r]) {
+                sorted[idx++] = nums[r++];
+            } else {
+                sorted[idx++] = nums[l++];
+            }
+        }
+
+        // r이 남았을 때
+        if (l > mid) {
+            while (r <= right) {
+                sorted[idx++] = nums[r++];
+            }
+        } else {
+            while (l <= mid) {
+                sorted[idx++] = nums[l++];
+            }
+        }
+
+        for (int i = left; i <= right; i++) {
+            nums[i] = sorted[i];
+        }
+
     }
 
     private static void input() throws IOException {
@@ -89,8 +112,8 @@ class Main {
 
         N = r.nextInt();
 
-        nums = new Integer[N + 1];
-        nums[0] = Integer.MAX_VALUE;
+        nums = new int[N + 1];
+        sorted = new int[N + 1];
 
         for (int i = 1; i <= N; i++) {
             nums[i] = r.nextInt();
