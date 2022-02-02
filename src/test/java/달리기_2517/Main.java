@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N;
-    static int[] nums;
+    static Integer[] nums;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -18,7 +18,7 @@ class Main {
 
     private static void solution() {
 //        StringBuilder ex = new StringBuilder();
-//        for (int i = 500_000; i > 0; i--) {
+//        for (int i = 1; i <= 500_000; i++) {
 //            ex.append(i).append('\n');
 //        }
 //
@@ -51,19 +51,33 @@ class Main {
 
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= N; i++) {
-            int right = i;
-            int left = i - 1;
-            while (nums[left] < nums[right]) {
-                swap(left, right);
-                left--;
-                right--;
-            }
-            sb.append(right).append('\n');
+            // 정렬
+            mergeSort(1, i);
+            Arrays.sort(nums, 1, i);
+
+            // 이분탐색
+            int idx = Arrays.binarySearch(nums, 1, i + 1, nums[i]);
+
+            sb.append(idx).append('\n');
         }
+
+        System.out.println(sb);
+    }
+
+    static void mergeSort(int left, int right) {
+        // right - left == 1
+        if (right - left == 1) {
+            swap(left, right);
+            return;
+        }
+
+        // right - left == 0 return
+        if (right - left == 0) return;
+
 
     }
 
-    private static void swap(int left, int right) {
+    static void swap(int left, int right) {
         int tmp = nums[left];
         nums[left] = nums[right];
         nums[right] = tmp;
@@ -75,7 +89,7 @@ class Main {
 
         N = r.nextInt();
 
-        nums = new int[N + 1];
+        nums = new Integer[N + 1];
         nums[0] = Integer.MAX_VALUE;
 
         for (int i = 1; i <= N; i++) {
