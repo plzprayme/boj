@@ -43,9 +43,9 @@ class Main {
         StringBuilder sb = new StringBuilder();
         for (Query q : query) {
             if (q.isUpdate()) {
-//               sum(q.b, q.c);
+               update(q.b, q.c);
             } else {
-               sb.append(prefixSum(q.b, q.c)).append('\n');
+               sb.append(sum(q.b, q.c)).append('\n');
             }
         }
 
@@ -63,8 +63,29 @@ class Main {
         }
     }
 
+    static void update(int idx, int value) {
+        // 바꿔치기한 부분이 영향을 주는 노드들 합을 변경
+        update(1, S, 1, idx, value);
+    }
+
+    static long update(int left , int right, int idx, int target, int value) {
+        if (target < left || right < target) return 0;
+
+        if (left == right && left == target) {
+            long tmp = value - tree[idx];
+            tree[idx] = value;
+            return tmp;
+        }
+
+        int mid = (left + right) / 2;
+        long leftResult = update(left, mid, idx * 2, target, value);
+        long rightResult = update(mid + 1, right, idx * 2 + 1, target, value);
+        tree[idx] += leftResult + rightResult;
+        return leftResult + rightResult;
+    }
+
     // 바텀업
-    static long prefixSum(int queryLeft, int queryRight) {
+    static long sum(int queryLeft, int queryRight) {
         return query(1, S, 1, queryLeft, queryRight);
     }
 
