@@ -43,7 +43,7 @@ class Main {
         StringBuilder sb = new StringBuilder();
         for (Query q : query) {
             if (q.isUpdate()) {
-//                sum(q.b, q.c);
+//               sum(q.b, q.c);
             } else {
                sb.append(prefixSum(q.b, q.c)).append('\n');
             }
@@ -54,7 +54,7 @@ class Main {
 
     static void initTree() {
         // 리프 노드에 숫자들 추가
-        for (int i = 1; i <= N; i++) {
+        for (int i = 0; i < N; i++) {
             tree[i + S] = arr[i];
         }
 
@@ -74,7 +74,7 @@ class Main {
         // -----------
         // - |    | --  일때
         // 쿼리 구간이랑 전혀 안겹칠 때
-        if (queryLeft < left || right < queryRight) return 0;
+        if (queryLeft > right ||  queryRight < left) return 0;
 
         //   | -- |
         //   |----|
@@ -101,12 +101,12 @@ class Main {
         M = r.nextInt();
         K = r.nextInt();
 
-        arr = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
+        arr = new int[N];
+        for (int i = 0; i < N; i++) {
             arr[i] = r.nextInt();
         }
 
-        S = (int) Math.pow(2, N - 1);
+        S = (int) Math.pow(2, N - 2);
         tree = new long[S * 2];
 
 
