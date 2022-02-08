@@ -11,16 +11,17 @@ class Main {
 
     static int S;
 
-    static int[] arr;
+    static long[] arr;
 
     static long[] tree;
 
     static Query[] query;
 
     static class Query {
-        int a, b, c;
+        int a, b;
+        long c;
 
-        public Query(int a, int b, int c) {
+        public Query(int a, int b, long c) {
             this.a = a;
             this.b = b;
             this.c = c;
@@ -45,7 +46,7 @@ class Main {
             if (q.isUpdate()) {
                update(q.b, q.c);
             } else {
-               sb.append(sum(q.b, q.c)).append('\n');
+               sb.append(sum(q.b, (int) q.c)).append('\n');
             }
         }
 
@@ -63,12 +64,22 @@ class Main {
         }
     }
 
-    static void update(int idx, int value) {
+    static void update(int idx, long value) {
         // 바꿔치기한 부분이 영향을 주는 노드들 합을 변경
         update(1, S, 1, idx, value);
     }
 
-    static long update(int left , int right, int idx, int target, int value) {
+//    static void update(int left, int right, int idx, int target, long diff) {
+//        if (target < left || right < target) return;
+//        tree[idx] += diff;
+//        if (left == right) return;
+//
+//        int mid = (left + right) / 2;
+//        update(left, mid, idx * 2, target, diff);
+//        update(mid + 1, right, idx * 2 + 1, target, diff);
+//    }
+
+    static long update(int left , int right, int idx, int target, long value) {
         if (target < left || right < target) return 0;
 
         if (left == right && left == target) {
@@ -112,28 +123,26 @@ class Main {
         return leftResult + rightResult;
     }
 
-    static void replace(int idx, int value) {
-        tree[idx] = value;
-    }
-
     private static void input() throws IOException {
         InputReader r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\구간합구하기_2042\\input.txt");
         N = r.nextInt();
         M = r.nextInt();
         K = r.nextInt();
 
-        arr = new int[N];
+        arr = new long[N];
         for (int i = 0; i < N; i++) {
-            arr[i] = r.nextInt();
+            arr[i] = r.nextLong();
         }
 
-        S = (int) Math.pow(2, N - 2);
+        S = 1;
+        while (N > S) {
+            S *= 2;
+        }
         tree = new long[S * 2];
-
 
         query = new Query[M + K];
         for (int i = 0; i < M + K; i++) {
-            query[i] = new Query(r.nextInt(), r.nextInt(), r.nextInt());
+            query[i] = new Query(r.nextInt(), r.nextInt(), r.nextLong());
         }
     }
 
@@ -157,6 +166,11 @@ class Main {
         public int nextInt() throws IOException {
             if (!st.hasMoreTokens()) st = new StringTokenizer(r.readLine());
             return Integer.parseInt(st.nextToken());
+        }
+
+        public long nextLong() throws IOException {
+            if (!st.hasMoreTokens()) st = new StringTokenizer(r.readLine());
+            return Long.parseLong(st.nextToken());
         }
 
         public char[] nextCharArr() throws IOException {
