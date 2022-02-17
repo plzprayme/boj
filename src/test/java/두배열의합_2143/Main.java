@@ -47,12 +47,39 @@ class Main {
         Arrays.sort(bSum);
 
         long answer = 0;
-        for (int i : aSum) {
+        for (int i : bSum) {
             // 같은 숫자가 있을 수 있다.
-            if (Arrays.binarySearch(bSum, T - i) < 0) continue;
-            answer++;
+            answer += upper_bound(T - i, aSum) - lower_bound(T - i, aSum);
         }
         System.out.println(answer);
+    }
+
+    private static int upper_bound(int n, int[] data) {
+        int left = 0;
+        int right = data.length;
+
+        while (left < right) {
+            int mid = (left + right) / 2;
+
+            if (data[mid] <= n) left = mid + 1;
+            else right = mid;
+        }
+
+        return right;
+    }
+
+    private static int lower_bound(int n, int[] data) {
+        int left = 0;
+        int right = data.length;
+
+        while (left < right) {
+            int mid = (left + right) / 2;
+
+            if (data[mid] >= n) right = mid;
+            else left = mid + 1;
+        }
+
+        return right;
     }
 
     private static void input() throws IOException {
