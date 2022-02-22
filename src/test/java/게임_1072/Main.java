@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class Main {
 
-    static long X, Y;
-    static long origin;
+    static long X, Y, Z;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -17,30 +16,29 @@ class Main {
     }
 
     private static void solution() {
-        int divided = getPercent(X, Y);
+        Z = getPercent(X, Y);
+        System.out.println(binarySearch());
+    }
 
-        // 99퍼, 100퍼일 때는 증가할 수가 없다.
-        if (divided == 99 || divided == 100) {
-            System.out.println(-1);
-            return;
+    static int binarySearch() {
+
+        int left = 1;
+        int right = 1_000_000_000;
+        int answer = -1;
+
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int percent = getPercent(X + mid, Y + mid);
+
+            if (Z < percent) {
+                answer = mid;
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
         }
 
-        int newDivided = divided;
-
-        int i = 100_000_000;
-        while (newDivided == divided) {
-            Y += i;
-            X += i;
-            newDivided = getPercent(X, Y);
-        }
-
-        while (newDivided != divided) {
-            Y -= 1;
-            X -= 1;
-            newDivided = getPercent(X, Y);
-        }
-
-        System.out.println(X - origin + 1);
+        return answer;
     }
 
     static int getPercent(long x, long y) {
@@ -50,7 +48,6 @@ class Main {
     private static void input() throws IOException {
         InputReader r = new InputReader();
         X = r.nextInt(); Y = r.nextInt();
-        origin = X;
     }
 
     private static class InputReader {
