@@ -10,7 +10,7 @@ class Main {
     static int N;
     static int[][] arr;
 
-    static int[][] ab, cd;
+    static int[] ab, cd;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -40,29 +40,58 @@ class Main {
 
         // 투포인터
 
-        Map<Integer, Integer> counter1 = new HashMap<>(N * N);
-        Map<Integer, Integer> counter2 = new HashMap<>(N * N);
+
+        int idx = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0 ; j < N; j++) {
-                int num = arr[0][i] + arr[1][j];
-
-                counter1.put(num, counter1.getOrDefault(num, 0) + 1);
-
-                num = arr[2][i] + arr[3][j];
-                counter2.put(num, counter2.getOrDefault(num, 0) + 1);
+                ab[idx] = arr[0][i] + arr[1][j];
+                cd[idx++] = arr[2][i] + arr[3][j];
             }
         }
 
+        Arrays.sort(ab);
+        Arrays.sort(cd);
 
-        int answer = 0;
-        for (var entry : counter1.entrySet()) {
-            int num = -entry.getKey();
-            if (counter2.containsKey(num)) {
-                answer += counter2.get(num) + entry.getValue() - 1;
+        int preNum = Integer.MIN_VALUE;
+        int preVal = 0;
+        long answer = 0;
+        for (int i : ab) {
+            if (preNum == i) {
+                answer += preVal;
+            }
+            else {
+                preVal = upper_bound(cd, -i) - lower_bound(cd, -i);
+                preNum = i;
+                answer += preVal;
             }
         }
         System.out.println(answer);
+    }
 
+    private static int upper_bound(int[] nums, int key) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+
+            if (key >= nums[mid]) left = mid + 1;
+            else right = mid - 1;
+        }
+
+        return left;
+    }
+
+    private static int lower_bound(int[] nums, int key) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+
+            if (key <= nums[mid]) right = mid - 1;
+            else left = mid + 1;
+        }
+
+        return left;
     }
 
     private static void input() throws IOException {
@@ -71,6 +100,8 @@ class Main {
         N = r.nextInt();
 
         arr = new int[4][N];
+        ab = new int[N * N];
+        cd = new int[N * N];
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < 4; j++) {
