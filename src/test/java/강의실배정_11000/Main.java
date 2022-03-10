@@ -59,35 +59,73 @@ class Main {
         // 입력의 연산이 200_000 log200_000 으로 증가함.. 일단 짜봐
 
         int answer = 0;
-        int classRoom= 0;
         PriorityQueue<Integer> endTimeQueue = new PriorityQueue<>();
         while (!startTimeQueue.isEmpty()) {
             Lecture lecture = startTimeQueue.poll();
 
             if (endTimeQueue.isEmpty()) {
                 endTimeQueue.add(lecture.end);
-                classRoom = 1;
-                answer = Math.max(answer, classRoom);
+                answer = Math.max(answer, endTimeQueue.size());
                 continue;
             }
 
-            // 만약 시작 시간이 endTime 보다 작다 -> 강의실이 더 필요하다
+
             int endTime = endTimeQueue.peek();
-            if (lecture.start < endTime) {
-                classRoom++;
-                answer = Math.max(answer, classRoom);
 
-                // lecture.end를 넣을까 말까?
-                // lecture.end가 endTime보다 작으면 넣지 말자.
-                if (lecture.end > endTime) {
-                    endTimeQueue.add(lecture.end);
-                }
-
+            // |-------|
+            //           |----|
+            // |---|
+            //     |--|
+            if (lecture.start >= endTime) {
+                endTimeQueue.poll();
                 continue;
             }
+
+            // |-------|
+            //   |---|
+            if (lecture.end < endTime) {
+                endTimeQueue.add(lecture.end);
+                answer = Math.max(answer, endTimeQueue.size());
+                continue;
+            }
+
+            // |-------|
+            //      |-----|
+            // |-------|
+            //     |---|
+            if (lecture.start < endTime && lecture.end >= endTime) {
+                endTimeQueue.add(lecture.end);
+                answer = Math.max(answer, endTimeQueue.size());
+                continue;
+            }
+
+
+            //
+            // 만약 시작 시간이 endTime 보다 작다 -> 강의실이 더 필요하다
+//            int endTime = endTimeQueue.peek();
+//            if (lecture.start < endTime) {
+//                classRoom++;
+//                answer = Math.max(answer, classRoom);
+//
+//                // lecture.end를 넣을까 말까?
+//                // lecture.end가 endTime보다 작으면 넣지 말자.
+//                if (lecture.end > endTime) {
+//                    endTimeQueue.add(lecture.end);
+//                }
+//
+//                continue;
+//            }
+
+//            1 5
+//            1 3
+//            4 5
+
+            // classRoom 을 줄여야한다.
+            // endTime 보다 lecture.start < endTime 이면 classRoom을
+//            endTime은 변하지 않았는데
+//            lectureEnd가 여러번 등장할 때..?
 
             // lecture.start > endTime  -> endTime을 다음으로 이동한다.
-            endTimeQueue.poll();
         }
 
         System.out.println(answer);
