@@ -20,8 +20,8 @@ class Main {
     private static void solution() {
 
         // 일단 누적합을 구하자
-        sum[0] = honey[0];
-        for (int i = 1; i < N; i++) {
+        sum[1] = honey[1];
+        for (int i = 2; i <= N; i++) {
             sum[i] = honey[i] + sum[i - 1];
         }
 
@@ -51,18 +51,18 @@ class Main {
         // 벌통 맨 오른쪽, 벌 맨 왼쪽 + 벌 이동 하는 경우의 수
         int answer = 0;
 
-        int leftBee = sum[N - 1] - honey[0];
-        for (int i = 1; i < N - 1; i++) {
-            // 벌이 맨 왼쪽에 있는 경우
-            int rightBee = sum[N - 1] - sum[i];
+        // 벌이 맨 왼쪽에 있는 경우
+        int leftBee = sum[N] - honey[1];
+        for (int i = 2; i < N; i++) {
+            int rightBee = sum[N] - sum[i];
             int total = leftBee + rightBee - honey[i];
             answer = Math.max(answer, total);
         }
 
         // 벌통 맨 왼쪽, 벌 맨 오른쪽 + 벌 이동하는 경우의 수
-        int rightBee = sum[N - 2];
-        for (int i = N - 2; i > 0; i--) {
-            leftBee = sum[N - 1] - sum[i];
+        int rightBee = sum[N] - honey[N];
+        for (int i = N - 1; i > 1; i--) {
+            leftBee = sum[i - 1];
             int total = leftBee + rightBee - honey[i];
             answer = Math.max(answer, total);
         }
@@ -73,6 +73,8 @@ class Main {
             answer = Math.max(answer , total + honey[i]);
         }
 
+        // 규칙을 보면
+
         System.out.println(answer);
     }
 
@@ -81,14 +83,13 @@ class Main {
 
         N = r.nextInt();
 
-        honey = new int[N];
+        honey = new int[N + 1];
 
-        for (int i = 0; i < N; i++) {
+        for (int i = 1; i <= N; i++) {
             honey[i] = r.nextInt();
         }
 
-        sum = new int[N];
-//        sum = new int[N][N];
+        sum = new int[N + 1];
     }
 
     private static class InputReader {
