@@ -8,9 +8,8 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N, M;
-    static int[] limit;
-
-    static PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+    static List<Integer> crain = new ArrayList<>();
+    static List<Integer> box = new ArrayList<>();
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -42,30 +41,7 @@ class Main {
         // 박스 무게 15 16 16
         // 2
 
-        Arrays.sort(limit);
 
-        if (pq.peek() > limit[N - 1]) {
-            System.out.println(-1);
-            return;
-        }
-
-        int answer = 0;
-        while (!pq.isEmpty()) {
-
-            for (int i = N - 1; i >= 0; i--) {
-
-                if (pq.isEmpty()) break;
-                if (limit[i] < pq.peek()) {
-                    break;
-                }
-
-                pq.poll();
-            }
-
-            answer++;
-        }
-
-        System.out.println(answer);
 
         // 크레인 숫자는 50 박스의 수는 10_000
 
@@ -83,6 +59,42 @@ class Main {
         // 오름차순 우선순위 큐?
         // 내림차순 우선순위 큐?
 
+        crain.sort(Collections.reverseOrder());
+        box.sort(Collections.reverseOrder());
+
+        if (crain.get(0) < box.get(0)) {
+            System.out.println(-1);
+            return;
+        }
+
+        int answer = 0;
+        int ci = 0;
+        int bi = 0;
+        while (!box.isEmpty()) {
+
+            if (crain.get(ci) >= box.get(bi)) {
+                // 박스를 싣을 수 있는 경우
+                box.remove(bi);
+                // 다음 크레인으로 이동
+                ci++;
+            } else {
+                // 박스를 적재할 수 없는 경우
+                // 크레인 < 박스
+                bi++;
+            }
+
+
+            // 크레인에 전부 담았다면?
+            // 모든 박스를 옮겼다면?
+            if (ci == N || bi == box.size()) {
+                answer++;
+                ci = 0;
+                bi = 0;
+            }
+        }
+
+        System.out.println(answer);
+
 
     }
 
@@ -90,18 +102,13 @@ class Main {
         InputReader r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\배_1092\\input.txt");
 
         N = r.nextInt();
-
-        limit = new int[N];
         for (int i = 0; i < N; i++) {
-            limit[i] = r.nextInt();
+            crain.add(r.nextInt());
         }
 
         M = r.nextInt();
-
-        // weight = new int[M];
         for (int i = 0 ; i < M; i++) {
-            // weight[i] = r.nextInt();
-            pq.add(r.nextInt());
+             box.add(r.nextInt());
         }
     }
 
