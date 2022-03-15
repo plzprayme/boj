@@ -74,6 +74,12 @@ class Main {
         }
 
 
+        if (firstMIndex != -1) {
+            for (int i = firstMIndex; i < MK.length(); i++) {
+                max.replace(i, i + 1, "1");
+            }
+        }
+
         System.out.println(max.append('\n').append(min));
 
     }
