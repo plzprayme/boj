@@ -8,22 +8,10 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N;
-    static int[] X, A;
 
-    static int[] populationSum;
-    static int[] positionSum;
+    static long[] populationSum;
 
     static City[] cities;
-    static Info[] infos;
-
-    static class Info {
-        int popSum, diffSum;
-
-        public Info(int popSum, int diffSum) {
-            this.popSum = popSum;
-            this.diffSum = diffSum;
-        }
-    }
 
     static class City implements Comparable<City> {
         int position, population;
@@ -36,7 +24,7 @@ class Main {
 
         @Override
         public int compareTo(City o) {
-            return Integer.compare(position, o.population);
+            return Integer.compare(position, o.position);
         }
     }
 
@@ -76,20 +64,15 @@ class Main {
             populationSum[i] = cities[i].population + populationSum[i - 1];
         }
 
-        // 좌표 누적 합 구하기
-        positionSum[0] = cities[0].position;
-        for (int i = 1; i < N; i++) {
-            positionSum[i] = cities[i].position + positionSum[i - 1];
-        }
+        // 인구 누적합의 절반
+        long half = (populationSum[N - 1] + 1) / 2;
 
-        // 기준 구하기
-        infos[0] = new Info(populationSum[N - 1] - populationSum[0], positionSum[N - 1] - positionSum[0]);
-        infos[N - 1] = new Info(populationSum[N - 2], positionSum[N - 2]);
-        for (int i = 1; i < N - 1; i++) {
-            infos[i] = new Info(populationSum[i - 1] + populationSum[N - 1] - populationSum[i], positionSum[i - 1] + positionSum[N - 1] - positionSum[i]);
+        for (int i = 0; i < N; i++) {
+            if (half <= populationSum[i]) {
+                System.out.println(cities[i].position);
+                return;
+            }
         }
-
-        System.out.println("");
     }
 
     private static void input() throws IOException {
@@ -102,9 +85,7 @@ class Main {
             cities[i] = new City(r.nextInt(), r.nextInt());
         }
 
-        infos = new Info[N];
-        populationSum = new int[N];
-        positionSum = new int[N];
+        populationSum = new long[N];
     }
 
     private static class InputReader {
