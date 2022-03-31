@@ -9,6 +9,7 @@ class Main {
 
     static int K, N;
     static String number;
+    static boolean[] deleted;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -25,36 +26,83 @@ class Main {
         // 9321 -> 932 -> 93 -> 9
 
 
-        while (K > 0) {
-            for (int i = 0; i < number.length(); i++) {
-                if (K == 0) break;
+        // 지워졌는가에 대한 배열
+        // 마지막 왼쪽 인덱스를 기억하고 있다.
+        // 한칸을 지웠으면 지운 칸의 왼쪽 칸과 지운 칸의 오른쪽 칸을 비교할 수 있다.
 
-                if (i + 1 == number.length()) {
-                    number = number.substring(0, i);
-                    K--;
-                    continue;
-                }
 
-                if (number.charAt(i) < number.charAt(i + 1)) {
-                    number = number.substring(0, i) + number.substring(i + 1);
-                    K--;
-                    break;
-                }
+        // 엣지 케이스
+        // 500_000 499_999
+        // 1 2222 .... 9
+
+        // 엣지 케이스 2
+        // 500_000 499_999
+        // 1 2 3 2 3 2 3 2 3 9
+
+        int left = 0;
+        for (int i = 1; i < number.length(); i++) {
+            if (K == 0) break;
+
+            // 왼쪽이 더 작다. -> 왼쪽을 지운다.
+            if (number.charAt(left) < number.charAt(i)) {
+                deleted[left] = true;
+                left = moveLeft(left);
+                if (left == -1) left = i;
+                K--;
+            } else if (i == number.length() - 1) {
+                delete();
+            } else if (left + 1 == i) {
+                left++;
+            } else {
+                left = moveRight(left, i);
             }
         }
 
 
-        System.out.println(number);
+        StringBuilder answer = new StringBuilder();
+        for (int i = 0; i < N; i++) {
+            if (deleted[i]) continue;
+            answer.append(number.charAt(i));
+        }
+        System.out.println(answer);
+    }
 
+
+    private static int moveRight(int left, int right) {
+        if (!deleted[right - 1]) return right - 1;
+
+        while (left < right - 1) {
+            if (deleted[left]) left++;
+            else break;
+        }
+        return left;
+    }
+
+    private static void delete() {
+        int n = N - 1;
+        while (K > 0) {
+            deleted[n--] = true;
+            K--;
+        }
+    }
+
+    private static int moveLeft(int left) {
+        while (left >= 0) {
+            if (deleted[left]) left--;
+            else break;
+        }
+        return left;
     }
 
     private static void input() throws IOException {
-        InputReader r = new InputReader();
+        InputReader r = new InputReader("C:\\Users\\workspace\\boj\\src\\test\\java\\크게만들기_2812\\input.txt");
 
         N = r.nextInt();
         K = r.nextInt();
 
         number = r.nextLine();
+
+        deleted = new boolean[number.length()];
     }
 
     private static class InputReader {
