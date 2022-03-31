@@ -9,7 +9,6 @@ class Main {
 
     static int K, N;
     static String number;
-    static boolean[] deleted;
 
     @Test
     public static void main(String[] args) throws IOException {
@@ -39,59 +38,21 @@ class Main {
         // 500_000 499_999
         // 1 2 3 2 3 2 3 2 3 9
 
-        int left = 0;
-        for (int i = 1; i < number.length(); i++) {
-            if (K == 0) break;
-
-            // 왼쪽이 더 작다. -> 왼쪽을 지운다.
-            if (number.charAt(left) < number.charAt(i)) {
-                deleted[left] = true;
-                left = moveLeft(left);
-                if (left == -1) left = i;
+        // 1회 순회하며 스택을 유지한다.
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < N; i++) {
+            while (K > 0 && !stack.isEmpty() && stack.peek() < number.charAt(i)) {
+                stack.pop();
                 K--;
-            } else if (i == number.length() - 1) {
-                delete();
-            } else if (left + 1 == i) {
-                left++;
-            } else {
-                left = moveRight(left, i);
             }
+            stack.push(number.charAt(i));
         }
-
 
         StringBuilder answer = new StringBuilder();
-        for (int i = 0; i < N; i++) {
-            if (deleted[i]) continue;
-            answer.append(number.charAt(i));
+        while (!stack.isEmpty()) {
+            answer.append(stack.pop());
         }
-        System.out.println(answer);
-    }
-
-
-    private static int moveRight(int left, int right) {
-        if (!deleted[right - 1]) return right - 1;
-
-        while (left < right - 1) {
-            if (deleted[left]) left++;
-            else break;
-        }
-        return left;
-    }
-
-    private static void delete() {
-        int n = N - 1;
-        while (K > 0) {
-            deleted[n--] = true;
-            K--;
-        }
-    }
-
-    private static int moveLeft(int left) {
-        while (left >= 0) {
-            if (deleted[left]) left--;
-            else break;
-        }
-        return left;
+        System.out.println(answer.reverse());
     }
 
     private static void input() throws IOException {
@@ -101,8 +62,6 @@ class Main {
         K = r.nextInt();
 
         number = r.nextLine();
-
-        deleted = new boolean[number.length()];
     }
 
     private static class InputReader {
