@@ -48,6 +48,10 @@ class Main {
             stack.push(number.charAt(i));
         }
 
+        while (K-- > 0) {
+            stack.pop();
+        }
+
         StringBuilder answer = new StringBuilder();
         while (!stack.isEmpty()) {
             answer.append(stack.pop());
