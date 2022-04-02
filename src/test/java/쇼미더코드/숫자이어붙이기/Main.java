@@ -18,6 +18,8 @@ class Main {
 
     static StringBuilder sb = new StringBuilder();
 
+    static List<Integer>[][] cache;
+
     static class Play {
         int src, dst;
 
@@ -47,14 +49,14 @@ class Main {
         // Q번 수를 이어 붙이는 놀이
 
         for (Play p : play) {
-            dfs(0, p.src, p.dst, String.valueOf(graph[p.src]));
+            dfs(0, p.src, p.src, p.dst, String.valueOf(graph[p.src]));
         }
 
         System.out.println(sb);
 
     }
 
-    static void dfs(int pre, int now, int dst, String answer) {
+    static void dfs(int pre, int src, int now, int dst, String answer) {
         if (now == dst) {
             sb.append(new BigDecimal(answer).remainder(WEIGHT)).append('\n');
             return;
@@ -62,7 +64,24 @@ class Main {
 
         for (Integer next : child[now]) {
             if (pre == next) continue;
-            dfs(now, next, dst, answer + graph[next]);
+
+            if (!cache[next][dst].isEmpty()) {
+                StringBuilder d = new StringBuilder();
+                for (Integer i : cache[next][dst]) {
+                    d.append(i);
+                }
+
+                sb.append(new BigDecimal(answer + d).remainder(WEIGHT)).append('\n');
+                return;
+            }
+
+            cache[src][next].addAll(cache[src][now]);
+            cache[src][next].add(graph[next]);
+
+            cache[next][src].addAll(cache[src][now]);
+            cache[next][src].add(graph[next]);
+            Collections.reverse(cache[next][src]);
+            dfs(now, src, next, dst, answer + graph[next]);
         }
 
     }
@@ -96,6 +115,12 @@ class Main {
             play[i] = new Play(r.nextInt(), r.nextInt());
         }
 
+        cache = new List[N + 1][N + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                cache[i][j] = new ArrayList<>();
+            }
+        }
     }
 
     private static class InputReader {
