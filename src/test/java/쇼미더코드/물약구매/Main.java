@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N;
+    static boolean[] flag;
     static Potion[] potions;
     static List<Sale>[] sale;
     static PriorityQueue<Potion> pq = new PriorityQueue<>();
@@ -79,12 +80,30 @@ class Main {
         // 우선 순위큐를 유지할 수 있나?
 
         int answer = 0;
-        while (!pq.isEmpty()) {
-            Potion p = pq.poll();
-            answer += p.cost;
+        PriorityQueue<Potion> pq2 = new PriorityQueue<>();
+        while (!pq.isEmpty() || !pq2.isEmpty()) {
+            if (pq2.isEmpty()) {
+                Potion p = pq.poll();
+                answer += p.cost;
 
-            for (Sale s : sale[p.idx]) {
-                potions[s.idx].cost = getCost(potions[s.idx].cost, s.cost);
+                for (Sale s : sale[p.idx]) {
+                    potions[s.idx].cost = getCost(potions[s.idx].cost, s.cost);
+                }
+
+                while (!pq.isEmpty()) {
+                    pq2.add(pq.poll());
+                }
+            } else if (pq.isEmpty()) {
+                Potion p = pq2.poll();
+                answer += p.cost;
+
+                for (Sale s : sale[p.idx]) {
+                    potions[s.idx].cost = getCost(potions[s.idx].cost, s.cost);
+                }
+
+                while (!pq2.isEmpty()) {
+                    pq.add(pq2.poll());
+                }
             }
         }
 
@@ -124,6 +143,8 @@ class Main {
                 sale[i].add(new Sale(r.nextInt(), r.nextInt()));
             }
         }
+
+        flag = new boolean[N + 1];
     }
 
     private static class InputReader {
