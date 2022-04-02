@@ -8,22 +8,42 @@ import org.junit.jupiter.api.Test;
 class Main {
 
     static int N;
-    static boolean[] flag;
     static Potion[] potions;
     static List<Sale>[] sale;
-    static PriorityQueue<Potion> pq = new PriorityQueue<>();
+
+    static boolean[] selected;
+    static int answer = Integer.MAX_VALUE;
 
     static class Potion implements Comparable<Potion> {
         int idx, cost, out;
 
+        private int minusCost, plusCost;
+
         public Potion(int idx, int cost) {
             this.idx = idx;
             this.cost = cost;
+            minusCost = cost;
         }
 
         public void setOut(int out) {
             this.out = out;
         }
+
+        public void minus(int weight) {
+            minusCost = minusCost - weight;
+            plusCost = weight;
+            cost = cost - weight;
+            if (cost <= 0) cost = 1;
+        }
+
+        public void plus(int weight) {
+            plusCost = plusCost - weight;
+            minusCost = minusCost + weight;
+            if (minusCost > 1) {
+                cost = minusCost;
+            }
+        }
+
 
         @Override
         public int compareTo(Potion o) {
@@ -79,37 +99,38 @@ class Main {
 
         // 우선 순위큐를 유지할 수 있나?
 
-        int answer = 0;
-        PriorityQueue<Potion> pq2 = new PriorityQueue<>();
-        while (!pq.isEmpty() || !pq2.isEmpty()) {
-            if (pq2.isEmpty()) {
-                Potion p = pq.poll();
-                answer += p.cost;
 
-                for (Sale s : sale[p.idx]) {
-                    potions[s.idx].cost = getCost(potions[s.idx].cost, s.cost);
-                }
+        // 그냥 부르트 포스?
 
-                while (!pq.isEmpty()) {
-                    pq2.add(pq.poll());
-                }
-            } else if (pq.isEmpty()) {
-                Potion p = pq2.poll();
-                answer += p.cost;
-
-                for (Sale s : sale[p.idx]) {
-                    potions[s.idx].cost = getCost(potions[s.idx].cost, s.cost);
-                }
-
-                while (!pq2.isEmpty()) {
-                    pq.add(pq2.poll());
-                }
-            }
-        }
+        backtracking(0, 0);
 
         System.out.println(answer);
 
+    }
 
+    private static void backtracking(int n, int sum) {
+        if (n == N) {
+            answer = Math.min(answer , sum);
+        } else {
+
+            for (int i = 1; i <= N; i++) {
+                if (selected[i]) continue;
+                if (answer <= sum + potions[i].cost) continue;
+
+                for (Sale s : sale[i]) {
+                    potions[s.idx].minus(s.cost);
+                }
+
+                selected[i] = true;
+                backtracking(n + 1, sum + potions[i].cost);
+                selected[i] = false;
+
+                for (Sale s : sale[i]) {
+                    potions[s.idx].plus(s.cost);
+                }
+            }
+
+        }
 
     }
 
@@ -130,7 +151,6 @@ class Main {
         potions = new Potion[N + 1];
         for (int i = 1; i <= N; i++) {
             Potion potion = new Potion(i, r.nextInt());
-            pq.add(potion);
             potions[i] = potion;
         }
 
@@ -144,7 +164,7 @@ class Main {
             }
         }
 
-        flag = new boolean[N + 1];
+        selected = new boolean[N + 1];
     }
 
     private static class InputReader {
